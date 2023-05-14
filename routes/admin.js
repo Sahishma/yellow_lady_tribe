@@ -133,6 +133,7 @@ router.get('/categories/delete-categories/:id',verifyLogin,(req,res)=>{
 
 router.get("/products",verifyLogin, async (req, res) => {
     // const products = await db().collection("product").find().toArray();
+    console.log('git test by p');
     productHelpers.getAllProducts().then((products)=>{
       res.render("admin/products/view-products", {
         products,
