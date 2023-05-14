@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{{>admin/head}}
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        {{>admin/spinner}}
+        {{>admin/sidebar}}
+        <div class="content">
+            {{>admin/navbar}}
+            {{{body}}}
+            {{>admin/footer}}
+        </div>
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+    {{>admin/scripts}}
+</body>
+
+</html>

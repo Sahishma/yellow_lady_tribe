@@ -1,0 +1,52 @@
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Edit Product</h6>
+                <form action="/admin/products/edit-products/{{products._id}}" method="post" id="editProducts_form" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <label for="product_name" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="product_name" name="product_name" value="{{products.product_name}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="price" class="col-sm-2 col-form-label">Price</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="price" name="price" value="{{products.price}}">
+                        </div>
+                    </div>
+                     <div class="row mb-3">
+                        <label for="category" class="col-sm-2 col-form-label">Category</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="category_name" name="category_name" value="{{products.category_name}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="stock" class="col-sm-2 col-form-label">Stock</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="stock" name="stock" value="{{products.stock}}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="status" class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="status" name="status" value="{{products.status}}">
+                        </div>
+                    </div>
+                      <div class="row mb-3">
+                        <label for="image" class="col-sm-2 col-form-label">Image</label>
+                        <img src="/img/{{products._id}}.jpg" alt=""style="width:100px;height:auto">
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" id="image" name="image">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
