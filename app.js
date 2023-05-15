@@ -15,11 +15,19 @@ const flash = require('connect-flash');
 const exphbs  = require('express-handlebars');
 const hbs = require('hbs');
 const fileUpload = require('express-fileupload')
+const helpers = require('handlebars-helpers')();
+const handlebars = require('handlebars');
 
 const app = express();
 
-
-
+// Custom helper function for comparison
+handlebars.registerHelper('isEqual', function (value1, value2, options) {
+  if (value1 == value2) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
 
 
 // view engine setup
@@ -30,7 +38,11 @@ app.engine('hbs', exphbs.create({
   extname: 'hbs',
   defaultLayout: 'adminLayout',
   layoutsDir: __dirname + '/views/layout/',
-  partialsDir: __dirname + '/views/partials/'
+  partialsDir: __dirname + '/views/partials/',
+  helpers: helpers,
+  handlebars: handlebars
+
+
 }).engine);
 
 app.use(logger("dev"));

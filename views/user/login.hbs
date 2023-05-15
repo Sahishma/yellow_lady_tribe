@@ -53,7 +53,7 @@
                             {{! <h3>LogIn</h3> }}
                         </div>
                         <form action="/login" method="post" id="login_form">
-                        {{# if loginErr}}
+                            {{# if loginErr}}
                             <div class="alert alert-danger">{{loginErr}}</div>
                             {{/if}}
                             <div class="form-floating mb-3">
@@ -62,9 +62,11 @@
                                 <label for="floatingInput">Email address</label>
                                 <div class="error" id="error_msg_email"> </div>
                             </div>
-                             {{#if this.status}}
-                             <p class="text-center mb-0">{{req.session.userLoginErr}}</p>
-                             {{/if}}
+                            {{!-- TODO  correction --}}
+                            {{#if this.status}}
+                            <p class="text-center mb-0">{{req.session.userLoginErr}}</p>
+                            {{/if}}
+                            {{!-- correction --}}
                             <div class="form-floating mb-4">
                                 <input type="password" class="form-control" id="password" name="password"
                                     placeholder="Password" />

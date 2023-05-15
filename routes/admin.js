@@ -131,9 +131,10 @@ router.get('/categories/delete-categories/:id',verifyLogin,(req,res)=>{
 
 //------------------------PRODUCTS SECTION-------------------------//
 
-router.get("/products",verifyLogin, async (req, res) => {
+router.get("/products", async (req, res) => {
     // const products = await db().collection("product").find().toArray();
     productHelpers.getAllProducts().then((products)=>{
+      console.log('products with agregration', products);
       res.render("admin/products/view-products", {
         products,
         successMsg: req.session.adminSuccessMsg,
@@ -166,7 +167,7 @@ router.post("/products/add-products", (req, res) => {
 
 // delete products
 
-router.get("/products/delete-products/:id",verifyLogin, (req, res) => {
+router.get("/products/delete-products/:id", (req, res) => {
   let productId = req.params.id;
   productHelpers.deleteProduct(productId).then((response) => {
     req.session.adminSuccessMsg = "Successfully Deleted";
@@ -176,21 +177,23 @@ router.get("/products/delete-products/:id",verifyLogin, (req, res) => {
 
 // Edit product
 
-router.get('/products/edit-products/:id',verifyLogin,async(req,res)=>{
+router.get('/products/edit-products/:id',async(req,res)=>{
   const categories = await db().collection("category").find().toArray();
   let products = await productHelpers.getProductDetails(req.params.id)
   res.render("admin/products/edit-products",{products,categories})
 })
-router.post('/products/edit-products/:id',verifyLogin,(req,res)=>{
+
+router.post('/products/edit-products/:id',(req,res)=>{
   console.log("is product id available?",req.params.id);
   let id = req.params.id
   productHelpers.updateProduct(req.params.id,req.body).then(()=>{
     req.session.adminSuccessMsg = "Successfully updated";
-    
-    // if(req.files.image){
-    //   let image = req.files.image;
-    //   image.mv('./public/img/'+id+'.jpg')
-    // }
+
+    if (req.files && 'image' in req.files) {
+      let image = req.files.image;
+      image.mv('./public/img/' + id + '.jpg');
+    }
+
     res.redirect("/admin/products")
   })
 })
