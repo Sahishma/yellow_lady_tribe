@@ -30,12 +30,32 @@ router.get('/register',(req,res) =>{
   res.render('user/register', {layout: 'userLayout', noNeedNav: true});
 });
 
-router.post('/register',(req,res)=>{
+router.post('/register',async(req,res)=>{
+  const email = req.body.email
+  console.log("body.email---------------->>>>",email);
+  const existingData = await userHelpers.getUserByEmail(email);
+  console.log("email from getuserbyemail to user.js",email);
+  console.log("existingEmail------------->>>>",existingData.email);
+  if(existingData.email === email){
+    console.log("<<<<<<<<<<<<<<<<<<  Entered to if condition >>>>>>>>>>>>>>>>>>");
+    req.session.registrationErr = "Entered Email Alredy Registered";
+    return res.redirect("/register")
+  }
+
+  // const phoneNo = req.body.phone
+  // console.log("body.PhoneNumber---------------->>>>",phoneNo);
+  // const existingDetails = await userHelpers.getUserByNumber(phoneNo);
+  // console.log("phoneNumber from getuserbyNumber to user.js",phoneNo);
+  // console.log("existingNumber------------->>>>",existingDetails.phoneNo);
+  // if(existingDetails.phone == phoneNo){
+  //   console.log("<<<<<<<<<<<<<<<<<<  Entered to if condition in phoneNumber case >>>>>>>>>>>>>>>>>>");
+  //   req.session.registrationErr = "Entered Phone Number Alredy Registered";
+  // }
+  
+
   userHelpers.doRegister(req.body).then((response) =>{
-    console.log('response from do register helper', response);
     req.session.user=response
     req.session.user.loggedIn=true
-    console.log('session after register',req.session);
     res.redirect('/') 
   })
 })
@@ -52,10 +72,9 @@ router.get('/login',(req,res)=>{
   }
 });
 router.post('/login',async(req,res)=>{
-  const { username, password } = req.body;
+  const username= req.body.email
   // Check if the user is blocked
   const user = await userHelpers.getUserByUsername(username);
-
   if (user && user.status === true) {
     // User is blocked, return an appropriate response or error message
     req.session.userLoginErr = 'Your account has been blocked.';
