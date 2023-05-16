@@ -1,7 +1,9 @@
 const express = require("express");
 const userHelpers = require("../helpers/user-helpers");
 const productHelpers = require("../helpers/product-helpers");
+const { db } = require("../config/connection");
 const router = express.Router();
+
 const verifyLogin = (req, res, next) => {
   if (req.session.user.loggedIn) {
     next();
@@ -12,9 +14,30 @@ const verifyLogin = (req, res, next) => {
 
 /* GET home page. */
 
-router.get("/", function (req, res, next) {
+router.get("/", async (req, res) => {
+  const products = await productHelpers.getAllProducts();
+  const categories = await db().collection("category").find().toArray();
+
   let user = req.session.user; // is user logged in? if yes,session will store the details
-  res.render("user/index", { user, layout: "userLayout" });
+  res.render("user/index", {
+    user,
+    products,
+    categories,
+    layout: "userLayout",
+  });
+});
+
+router.get("/products/:category_id", async (req, res) => {
+  const category_id = req.params.category_id;
+  console.log('category id received from href', category_id);
+  const categories = await db().collection("category").find().toArray();
+  const reqUrl= req.url;
+
+  productHelpers.getProductsByCategory(category_id).then((products) => {
+    console.log('prodets fetched ', products);
+    res.render("user/list-products-by-category", { products, categories, reqUrl,  layout: "userLayout", });
+    req.session.adminSuccessMsg = false;
+  });
 });
 
 /* Register */
@@ -101,19 +124,6 @@ router.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-//--------product listing in user side---------//
 
-router.get("/listing", async (req, res) => {
-  try {
-    const productsInDb = await productHelpers.getAllProducts();
-    res.render("user/listing", {
-      productsInDb,
-      layout: "userLayout",
-      // successMsg: req.session.adminSuccessMsg,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
 
 module.exports = router;

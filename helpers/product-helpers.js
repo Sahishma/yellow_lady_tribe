@@ -81,10 +81,47 @@ module.exports = {
     });
   },
   
+  getProductsByCategory: (categoryId) => {
+    return new Promise(async (resolve, reject) => {
+      let products = await db()
+        .collection(collections.PRODUCT_COLLECTION)
+        .aggregate([
+          {
+            $lookup: {
+              from: collections.CATEGORY_COLLECTION,
+              localField: "category_id",
+              foreignField: "_id",
+              as: "category"
+            }
+          },
+          {
+            $unwind: {
+              path: "$category",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $match: {
+              category_id: categoryId // Filter by category_id
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              product_name: 1,
+              price: 1,
+              stock: 1,
+              status: 1,
+              category_name: "$category.category_name"
+            }
+          }
+        ])
+        .toArray();
+      resolve(products);
+    });
+  },
   
   
-  
-
 
   deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
