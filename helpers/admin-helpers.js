@@ -8,14 +8,14 @@ module.exports = {
     //* login *//
 
     doLogin: (adminData) => {
-      console.log('do login fn init, data : ', adminData);
+      
         return new Promise(async (resolve, reject) => {
           let loginStatus = false;
           let response = {};
           let admin = await db()
             .collection(collections.ADMIN_COLLECTION)
             .findOne({ email: adminData.email });
-            console.log('admin data fetched', admin);
+            
           if (admin) {
             bcrypt.compare(adminData.password, admin.password).then((status) => {
               if (status) {

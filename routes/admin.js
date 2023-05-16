@@ -44,7 +44,6 @@ router.get("/login", (req, res) => {
     req.session.adminLoginErr = false;
   }
 });
-
 router.post("/login", (req, res) => {
   adminHelpers.doLogin(req.body).then((response) => {
     if (response.status) {
@@ -59,7 +58,7 @@ router.post("/login", (req, res) => {
 });
 
 //logout
-router.get("/logout", (req, res) => {
+router.get("/logout",verifyLogin, (req, res) => {
   req.session.admin = null;
   res.redirect("/admin/login");
 });
@@ -131,10 +130,8 @@ router.get('/categories/delete-categories/:id',verifyLogin,(req,res)=>{
 
 //------------------------PRODUCTS SECTION-------------------------//
 
-router.get("/products", async (req, res) => {
-    // const products = await db().collection("product").find().toArray();
+router.get("/products",verifyLogin, async (req, res) => {
     productHelpers.getAllProducts().then((products)=>{
-      console.log('products with agregration', products);
       res.render("admin/products/view-products", {
         products,
         successMsg: req.session.adminSuccessMsg,
@@ -144,13 +141,12 @@ router.get("/products", async (req, res) => {
 });
 
 //add products
-router.get("/products/add-products", async(req, res) => {
+router.get("/products/add-products",verifyLogin, async(req, res) => {
     const categories = await db().collection("category").find().toArray();
-    console.log('categories fetched in product get',categories);
     res.render("admin/products/add-products", {categories});
 });
 
-router.post("/products/add-products", (req, res) => {
+router.post("/products/add-products",verifyLogin, (req, res) => {
   productHelpers.addproduct(req.body, (insertedId) => {
     let image = req.files.image
     image.mv('./public/img/'+insertedId+'.jpg',(err,done)=>{
@@ -167,7 +163,7 @@ router.post("/products/add-products", (req, res) => {
 
 // delete products
 
-router.get("/products/delete-products/:id", (req, res) => {
+router.get("/products/delete-products/:id",verifyLogin, (req, res) => {
   let productId = req.params.id;
   productHelpers.deleteProduct(productId).then((response) => {
     req.session.adminSuccessMsg = "Successfully Deleted";
@@ -177,14 +173,13 @@ router.get("/products/delete-products/:id", (req, res) => {
 
 // Edit product
 
-router.get('/products/edit-products/:id',async(req,res)=>{
+router.get('/products/edit-products/:id',verifyLogin,async(req,res)=>{
   const categories = await db().collection("category").find().toArray();
   let products = await productHelpers.getProductDetails(req.params.id)
   res.render("admin/products/edit-products",{products,categories})
 })
 
-router.post('/products/edit-products/:id',(req,res)=>{
-  console.log("is product id available?",req.params.id);
+router.post('/products/edit-products/:id',verifyLogin,(req,res)=>{
   let id = req.params.id
   productHelpers.updateProduct(req.params.id,req.body).then(()=>{
     req.session.adminSuccessMsg = "Successfully updated";
@@ -200,15 +195,7 @@ router.post('/products/edit-products/:id',(req,res)=>{
 
 //______________________Users Section______________________//
 
-// router.get("/user",verifyLogin, async (req, res) => {
-//   userHelpers.getAllUsers().then((user)=>{
-//     res.render("admin/user/view-users", {
-//       user,
-//       successMsg: req.session.adminSuccessMsg,
-//   })
-//   req.session.adminSuccessMsg = false;
-// });
-// });
+
 
 router.get('/user', verifyLogin, async (req, res) => {
   try {
@@ -228,7 +215,6 @@ router.get('/user/block/:id', verifyLogin, async (req, res) => {
   try {
     const userId = req.params.id;
     await userHelpers.blockUser(userId);
-    console.log("this is from block user",userId);
     req.session.adminSuccessMsg = 'User Blocked successfully';
     res.redirect('/admin/user');
   } catch (error) {

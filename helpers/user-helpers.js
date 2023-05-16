@@ -67,23 +67,11 @@ module.exports = {
       const userEmail = await db()
       .collection(collections.USER_COLLECTION)
       .findOne({email});
-      console.log("email from getUserByEmail=",userEmail);
       return userEmail;
     }catch(error){
       console.log(error);
     }
   },
-
-  // getUserByNumber: async(phone)=>{
-  //   try{
-  //     const existingUser = await db()
-  //     .collection(collections.USER_COLLECTION)
-  //     .findOne({phone});
-  //     return existingUser;
-  //   }catch(error){
-  //     console.log(error);
-  //   }
-  // },
 
   getAllUsers: async () => {
     try {
