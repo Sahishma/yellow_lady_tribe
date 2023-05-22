@@ -4,6 +4,7 @@ const adminHelpers = require("../helpers/admin-helpers");
 const categoryHelpers = require("../helpers/category-helpers");
 const productHelpers = require("../helpers/product-helpers");
 const userHelpers = require("../helpers/user-helpers");
+const orderHelpers = require("../helpers/order-helpers");
 const { db } = require("../config/connection");
 const collections = require("../config/collections");
 const { response } = require("../app");
@@ -233,5 +234,13 @@ router.get('/user/unblock/:id', verifyLogin, async (req, res) => {
     console.log(error);
   }
 });
+
+//___________________Order section__________________//
+
+router.get('/orders',verifyLogin,async(req,res)=>{
+  let orders = await orderHelpers.getAllOrders()
+  console.log("orders in admin=======>",orders);
+      res.render('admin/orders/view-orders',{orders}) 
+})
 
 module.exports = router;

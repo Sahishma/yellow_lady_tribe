@@ -2,14 +2,19 @@ const express = require("express");
 const userHelpers = require("../helpers/user-helpers");
 const productHelpers = require("../helpers/product-helpers");
 const { db } = require("../config/connection");
+const { response } = require("../app");
 const router = express.Router();
 
 const verifyLogin = (req, res, next) => {
+  if(req.session.user){
   if (req.session.user.loggedIn) {
     next();
   } else {
     res.redirect("/login");
   }
+}else{
+  res.redirect('/login');
+}
 };
 
 /* GET home page. */
@@ -18,12 +23,17 @@ router.get("/", async (req, res) => {
   const products = await productHelpers.getAllProducts();
   const categories = await db().collection("category").find().toArray();
 
-  let user = req.session.user; // is user logged in? if yes,session will store the details
+  let user = req.session.user; 
+  let cartCount = null
+  if(req.session.user){
+   cartCount= await userHelpers.getCartCount(req.session.user._id)
+  }
   res.render("user/index", {
     user,
     products,
     categories,
     layout: "userLayout",
+    cartCount,
   });
 });
 
@@ -116,6 +126,103 @@ router.post("/login", async (req, res) => {
     }
   });
 });
+
+//---------------------CART--------------------------//
+
+router.get("/cart", verifyLogin, async (req, res) => {
+  try {
+    // Call the 'getCartProducts' function
+    let products = await userHelpers.getCartProducts(req.session.user._id);
+    // console.log('##########',req.session.user._id);
+    // Call the 'getTotalAmount' function
+    let total = await userHelpers.getTotalAmount(req.session.user._id);
+    // console.log('**********',req.session.user._id);
+    res.render('user/cart', {
+      loginErr: req.session.userLoginErr,
+      layout: "userLayout",
+      products,
+     user: req.session.user._id,
+      total
+    });
+  } catch (error) {
+    // Handle any errors that occurred during the process
+    console.error(error);
+    res.render('error', { error });
+  }
+});
+
+
+
+// router.get("/cart",verifyLogin,async(req,res)=>{
+//   let products = await userHelpers.getCartProducts(req.session.user._id) 
+//   let total=await userHelpers.getTotalAmount(req.session.user._id)
+//   res.render('user/cart',{loginErr: req.session.userLoginErr,
+//     layout: "userLayout",products,user:req.session.user})
+// });
+// adding products to db 
+
+router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
+  console.log("api call");
+  userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
+    res.json({status:true})
+  });
+})
+// incrementing and decrimenting quantity
+router.post('/change-product-quantity',(req,res,next)=>{
+  userHelpers.changeProductQuantity(req.body).then(async(response)=>{
+    response.total=await userHelpers.getTotalAmount(req.body.user)
+    res.json(response)
+  })
+})
+
+
+//-------------------Checkout----------------//
+
+router.get('/checkout',verifyLogin,async(req,res)=>{
+  console.log("get /checkout");
+  console.log("user id from get /checkout",req.session.user._id);
+  let total=await userHelpers.getTotalAmount(req.session.user._id)
+  res.render('user/checkout',{loginErr: req.session.userLoginErr,
+    layout: "userLayout",user:req.session.user,total})
+})
+
+router.post('/checkout',async(req,res)=>{
+  let products=await userHelpers.getCartProductList(req.body.userId)
+  let totalPrice=await userHelpers.getTotalAmount(req.body.userId)
+  userHelpers.checkOut(req.body,products,totalPrice).then((response)=>{
+    console.log("is status is there in response ?  -------->",response);
+    res.json({status:true})
+  })
+  console.log(req.body)
+})
+
+//_____________________orders_______________________//
+
+
+
+router.get('/order-success',(req,res)=>{
+  res.render('user/order-success',{user:req.session.user,layout:"userLayout"})
+})
+
+router.get('/orders',async(req,res)=>{
+  let orders = await userHelpers.getUserOrders(req.session.user._id)
+  console.log("orders---------->",orders)
+  res.render('user/orders',{user:req.session.user,layout:"userLayout",orders})
+  
+})
+
+router.get('/view-order-products/:id',async(req,res)=>{
+  let products = await userHelpers.getOrderProducts(req.params.id)
+  res.render('user/view-order-products',{user:req.session.user,
+    products,
+    layout:"userLayout"
+  })
+})
+
+
+
+
+
 
 //logout
 

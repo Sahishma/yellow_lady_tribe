@@ -29,8 +29,7 @@ module.exports = {
 
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
-      let products = await db()
-        .collection(collections.PRODUCT_COLLECTION)
+      let products = await db().collection(collections.PRODUCT_COLLECTION)
         .aggregate([
           {
             $lookup: {
