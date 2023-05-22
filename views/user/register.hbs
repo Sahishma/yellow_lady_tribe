@@ -55,6 +55,9 @@
                             {{! <h3>Register</h3> }}
                         </div>
                         <form action="/register" method="post" id="register_form">
+                            {{# if userErr}}
+                                <div class="alert alert-danger">{{userErr}}</div>
+                            {{/if}}
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control" name="username" id="username"
                                     placeholder="jhondoe" />

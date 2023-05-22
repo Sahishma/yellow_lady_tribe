@@ -20,7 +20,11 @@
                     </div>
                     <div class="navbar-nav ml-auto py-0">
                         {{# if user}}
-                        <a href="/logout" class="nav-item nav-link">LogOut</a>
+                       
+                        <span class="nav-item nav-link"> <i class="fas fa-user text-primary"></i> {{user.username}}</span>
+                        <a href="/logout" class="nav-item nav-link">  <i class="fas fa-sign-out-alt text-primary"></i> LogOut</a>
+
+                       
 
                         {{else}}
                         <a class="nav-item nav-link" href="/login">Login</a>

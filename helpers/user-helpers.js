@@ -13,6 +13,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       userData.password = await bcrypt.hash(userData.password, 10);
       console.log(userData.password, "enc pass");
+      console.log('collections.USER_COLLECTION', collections.USER_COLLECTION);
       db()
         .collection(collections.USER_COLLECTION)
         .insertOne(userData)
@@ -64,10 +65,19 @@ module.exports = {
 
   getUserByEmail: async (email) => {
     try {
-      const userEmail = await db()
-        .collection(collections.USER_COLLECTION)
-        .findOne({ email });
-      return userEmail;
+      console.log('email inside getUserByEmail', email);
+      const user = await db().collection(collections.USER_COLLECTION).findOne({email:email });
+      console.log('getUserByEmail', user);
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  getUserByPhoneNo: async (phoneNo) => {
+    try {
+      const user = await db().collection(collections.USER_COLLECTION).findOne({phone:phoneNo });
+      return user;
     } catch (error) {
       console.log(error);
     }

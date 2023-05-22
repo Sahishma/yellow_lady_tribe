@@ -24,6 +24,7 @@ router.get("/", async (req, res) => {
   const categories = await db().collection("category").find().toArray();
 
   let user = req.session.user; 
+  console.log('user session details', user);
   let cartCount = null
   if(req.session.user){
    cartCount= await userHelpers.getCartCount(req.session.user._id)
@@ -42,10 +43,11 @@ router.get("/products/:category_id", async (req, res) => {
   console.log('category id received from href', category_id);
   const categories = await db().collection("category").find().toArray();
   const reqUrl= req.url;
+  let user = req.session.user; 
 
   productHelpers.getProductsByCategory(category_id).then((products) => {
     console.log('prodets fetched ', products);
-    res.render("user/list-products-by-category", { products, categories, reqUrl,  layout: "userLayout", });
+    res.render("user/list-products-by-category", { products, categories, reqUrl, user,  layout: "userLayout", });
     req.session.adminSuccessMsg = false;
   });
 });
@@ -56,33 +58,28 @@ router.get("/register", (req, res) => {
   if (req.session.user) {
     res.redirect("/");
   }
+
   res.set("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.render("user/register", { layout: "userLayout", noNeedNav: true });
+  res.render("user/register", {userErr: req.session.userRegisterErr, layout: "userLayout", noNeedNav: true });
+  req.session.userRegisterErr = false;
 });
 
 router.post("/register", async (req, res) => {
+  //check email exist or not
   const email = req.body.email;
-  console.log("body.email---------------->>>>", email);
-  const existingData = await userHelpers.getUserByEmail(email);
-  console.log("email from getuserbyemail to user.js", email);
-  console.log("existingEmail------------->>>>", existingData.email);
-  if (existingData.email === email) {
-    console.log(
-      "<<<<<<<<<<<<<<<<<<  Entered to if condition >>>>>>>>>>>>>>>>>>"
-    );
-    req.session.registrationErr = "Entered Email Alredy Registered";
+  const getUserByEmail = await userHelpers.getUserByEmail(email);
+  if (getUserByEmail != null) {
+    req.session.userRegisterErr = "Entered Email already exist";
     return res.redirect("/register");
   }
 
-  // const phoneNo = req.body.phone
-  // console.log("body.PhoneNumber---------------->>>>",phoneNo);
-  // const existingDetails = await userHelpers.getUserByNumber(phoneNo);
-  // console.log("phoneNumber from getuserbyNumber to user.js",phoneNo);
-  // console.log("existingNumber------------->>>>",existingDetails.phoneNo);
-  // if(existingDetails.phone == phoneNo){
-  //   console.log("<<<<<<<<<<<<<<<<<<  Entered to if condition in phoneNumber case >>>>>>>>>>>>>>>>>>");
-  //   req.session.registrationErr = "Entered Phone Number Alredy Registered";
-  // }
+  //check mobile exist or not
+  const phoneNo = req.body.phone;
+  const getUserByPhoneNo = await userHelpers.getUserByPhoneNo(phoneNo);
+  if (getUserByPhoneNo != null) {
+    req.session.userRegisterErr = "Entered Phone number already exist";
+    return res.redirect("/register");
+  }
 
   userHelpers.doRegister(req.body).then((response) => {
     req.session.user = response;
@@ -130,6 +127,8 @@ router.post("/login", async (req, res) => {
 //---------------------CART--------------------------//
 
 router.get("/cart", verifyLogin, async (req, res) => {
+  const categories = await db().collection("category").find().toArray();
+  let user = req.session.user
   try {
     // Call the 'getCartProducts' function
     let products = await userHelpers.getCartProducts(req.session.user._id);
@@ -141,8 +140,10 @@ router.get("/cart", verifyLogin, async (req, res) => {
       loginErr: req.session.userLoginErr,
       layout: "userLayout",
       products,
+      categories,
      user: req.session.user._id,
-      total
+      total,
+      user
     });
   } catch (error) {
     // Handle any errors that occurred during the process
