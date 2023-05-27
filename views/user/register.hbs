@@ -35,8 +35,7 @@
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
         <!-- Spinner Start -->
-        <div id="spinner"
-            class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
@@ -56,40 +55,35 @@
                         </div>
                         <form action="/register" method="post" id="register_form">
                             {{# if userErr}}
-                                <div class="alert alert-danger">{{userErr}}</div>
+                            <div class="alert alert-danger">{{userErr}}</div>
                             {{/if}}
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" name="username" id="username"
-                                    placeholder="jhondoe" />
+                                <input type="text" class="form-control" name="username" id="username" placeholder="jhondoe" />
                                 <label for="floatingText">Username</label>
                                 <div class="error" id="error_msg_username"> </div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" name="email" id="email"
-                                    placeholder="name@example.com" />
+                                <input type="text" class="form-control" name="email" id="email" placeholder="name@example.com" />
                                 <label for="floatingInput">Email address</label>
                                 <div class="error" id="error_msg_email"></div>
                             </div>
-                             {{!-- {{#if existingData.email === email}}
-                             <p class="text-center mb-0">{{req.session.registrationErr}}</p>
-                             {{/if}} --}}
+                            {{!-- {{#if existingData.email === email}}
+                            <p class="text-center mb-0">{{req.session.registrationErr}}</p>
+                            {{/if}} --}}
 
                             <div class="form-floating mb-3">
-                                <input type="tel" class="form-control" name="phone" id="phone"
-                                    placeholder="Mobile Number"/>
+                                <input type="tel" class="form-control" name="phone" id="phone" placeholder="Mobile Number" />
                                 <label for="floatingInput">Phone Number</label>
                                 <div class="error" id="error_msg_phone"></div>
                             </div>
 
                             <div class="form-floating mb-4">
-                                <input type="password" class="form-control" name="password" id="password"
-                                    placeholder="Password" />
+                                <input type="password" class="form-control" name="password" id="password" placeholder="Password" />
                                 <label for="floatingPassword">Password</label>
                                 <div class="error" id="error_msg_password"></div>
                             </div>
                             <div class="form-floating mb-4">
-                                <input type="password" class="form-control" name="password2" id="password2"
-                                    placeholder="Password" />
+                                <input type="password" class="form-control" name="password2" id="password2" placeholder="Password" />
                                 <label for="floatingPassword">Confirm Password</label>
                                 <div class="error" id="error_msg_password2"></div>
                             </div>

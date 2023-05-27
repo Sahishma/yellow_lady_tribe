@@ -1,6 +1,6 @@
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
-    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 100px">
         <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
         <div class="d-inline-flex">
             <p class="m-0"><a href="">Home</a></p>
@@ -36,9 +36,9 @@
                         <td class="align-middle">Rs.{{this.product.price}}</td>
 
                         <td class="align-middle">
-                            <button class="cart-item-count mr-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user}}',-1)">-</button>
+                            <button class="cart-item-count mr-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../userId}}',-1)">-</button>
                             <span id="{{this.product._id}}">{{this.quantity}}</span>
-                            <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user}}',1)">+</button>
+                            <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../userId}}',1)">+</button>
                         </td>
                         {{!-- <td class="align-middle">Rs.</td> --}}
                         <td class="align-middle">
@@ -87,14 +87,14 @@
 </div>
 
 <script>
-    function changeQuantity(cartId, proId,userId,count) {
-       // console.log('========...====>',cartId, proId,userId,count)
+    function changeQuantity(cartId, proId, userId, count) {
+        // console.log('========...====>',cartId, proId,userId,count)
         let quantity = parseInt(document.getElementById(proId).innerHTML)
         count = parseInt(count)
         $.ajax({
             url: '/change-product-quantity',
             data: {
-                user:userId,
+                user: userId,
                 cart: cartId,
                 product: proId,
                 count: count,
@@ -108,7 +108,7 @@
                 } else {
                     console.log(response)
                     document.getElementById(proId).innerHTML = quantity + count
-                    document.getElementById('total').innerHTML=response.total
+                    document.getElementById('total').innerHTML = response.total
                 }
 
             }

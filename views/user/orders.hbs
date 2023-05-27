@@ -2,18 +2,15 @@
     <div class="row g-4">
         <div class="col-12">
             <div class="bg-light rounded h-100 p-4">
-                
+
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Address</th>
-                                <th scope="col">Pincode</th>
-                                <th scope="col">Mobile</th>
-                                <th scope="col">Amount</th>
-                                <th scope="col">Payment</th>
-                                <th>Status</th>
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Total Amount</th>
+                                <th scope="col">Payment Method</th>
+                                <th>Order Status</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -21,16 +18,12 @@
 
                             {{#each orders}}
                             <tr>
-                                <th scope="row">{{this.date}}</th>
-                                <td>{{this.deliveryDetails.address}}</td>
-                                <td>{{this.deliveryDetails.pincode}}</td>
-                                <td>{{this.deliveryDetails.mobile}}</td>
+                                <th scope="row">{{this._id}}</th>
                                 <td>{{this.totalAmount}}</td>
                                 <td>{{this.payment}}</td>
                                 <td>{{this.status}}</td>
                                 <td>
-                                    <a href="/view-order-products/{{this._id}}"
-                                        class="btn btn-primary m-2">View Products</button></a>
+                                    <a href="/view-order-products/{{this._id}}" class="btn btn-primary m-2">View Products</button></a>
                                 </td>
                             </tr>
 

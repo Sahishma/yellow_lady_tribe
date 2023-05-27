@@ -59,7 +59,7 @@ router.post("/login", (req, res) => {
 });
 
 //logout
-router.get("/logout",verifyLogin, (req, res) => {
+router.get("/logout", verifyLogin, (req, res) => {
   req.session.admin = null;
   res.redirect("/admin/login");
 });
@@ -67,21 +67,21 @@ router.get("/logout",verifyLogin, (req, res) => {
 //--------------------------CATEGORY SECTION--------------------------//
 
 router.get("/categories", verifyLogin, async (req, res) => {
-    const categories = await db().collection("category").find().toArray();
-    res.render("admin/categories/view-categories", {
-      categories,
-      successMsg: req.session.adminSuccessMsg,
-    });
-    req.session.adminSuccessMsg = false;
+  const categories = await db().collection("category").find().toArray();
+  res.render("admin/categories/view-categories", {
+    categories,
+    successMsg: req.session.adminSuccessMsg,
+  });
+  req.session.adminSuccessMsg = false;
 });
 
 //add category
 
-router.get("/categories/add",verifyLogin, (req, res) => {
-    res.render("admin/categories/add");
+router.get("/categories/add", verifyLogin, (req, res) => {
+  res.render("admin/categories/add");
 });
 
-router.post("/categories/add",verifyLogin, (req, res) => {
+router.post("/categories/add", verifyLogin, (req, res) => {
   categoryHelpers.addCategory(req.body, (insertedId) => {
     req.session.adminSuccessMsg = "Successfully Added";
     res.redirect("/admin/categories");
@@ -90,16 +90,16 @@ router.post("/categories/add",verifyLogin, (req, res) => {
 
 //Edit Category
 
-router.get("/categories/edit-categories/:id",verifyLogin, (req, res) => {
-    const categoryId = req.params.id;
-    categoryHelpers.getCategoryById(categoryId, (category) => {
-      res.render("admin/categories/edit-categories", { category: category });
-    });
+router.get("/categories/edit-categories/:id", verifyLogin, (req, res) => {
+  const categoryId = req.params.id;
+  categoryHelpers.getCategoryById(categoryId, (category) => {
+    res.render("admin/categories/edit-categories", { category: category });
+  });
 });
 
 // Update Category
 
-router.post("/categories/edit-categories/:id",verifyLogin, (req, res) => {
+router.post("/categories/edit-categories/:id", verifyLogin, (req, res) => {
   const categoryid = req.params.id; // get the ID of the category to edit from the URL
   const updatedCategory = {
     // define the updatedCategory object with the new values from the form
@@ -121,50 +121,50 @@ router.post("/categories/edit-categories/:id",verifyLogin, (req, res) => {
 
 // Delete category
 
-router.get('/categories/delete-categories/:id',verifyLogin,(req,res)=>{
+router.get("/categories/delete-categories/:id", verifyLogin, (req, res) => {
   let categoryId = req.params.id;
-  categoryHelpers.deleteCategory(categoryId).then((response)=>{
+  categoryHelpers.deleteCategory(categoryId).then((response) => {
     req.session.adminSuccessMsg = "Successfully Deleted";
-    res.redirect("/admin/categories")
-  })
-})
+    res.redirect("/admin/categories");
+  });
+});
 
 //------------------------PRODUCTS SECTION-------------------------//
 
-router.get("/products",verifyLogin, async (req, res) => {
-    productHelpers.getAllProducts().then((products)=>{
-      res.render("admin/products/view-products", {
-        products,
-        successMsg: req.session.adminSuccessMsg,
-    })
+router.get("/products", verifyLogin, async (req, res) => {
+  productHelpers.getAllProducts().then((products) => {
+    console.log("products:::::",products)
+    res.render("admin/products/view-products", {
+      products,
+      successMsg: req.session.adminSuccessMsg,
+    });
     req.session.adminSuccessMsg = false;
   });
 });
 
 //add products
-router.get("/products/add-products",verifyLogin, async(req, res) => {
-    const categories = await db().collection("category").find().toArray();
-    res.render("admin/products/add-products", {categories});
+router.get("/products/add-products", verifyLogin, async (req, res) => {
+  const categories = await db().collection("category").find().toArray();
+  res.render("admin/products/add-products", { categories });
 });
 
-router.post("/products/add-products",verifyLogin, (req, res) => {
+router.post("/products/add-products", verifyLogin, (req, res) => {
   productHelpers.addproduct(req.body, (insertedId) => {
-    let image = req.files.image
-    image.mv('./public/img/'+insertedId+'.jpg',(err,done)=>{
-      if(!err){
+    let image = req.files.image;
+    image.mv("./public/img/" + insertedId + ".jpg", (err, done) => {
+      if (!err) {
         req.session.adminSuccessMsg = "Successfully Added";
         res.redirect("/admin/products");
-      }else{
+      } else {
         console.log(err);
       }
-    })
-   
+    });
   });
 });
 
 // delete products
 
-router.get("/products/delete-products/:id",verifyLogin, (req, res) => {
+router.get("/products/delete-products/:id", verifyLogin, (req, res) => {
   let productId = req.params.id;
   productHelpers.deleteProduct(productId).then((response) => {
     req.session.adminSuccessMsg = "Successfully Deleted";
@@ -174,34 +174,32 @@ router.get("/products/delete-products/:id",verifyLogin, (req, res) => {
 
 // Edit product
 
-router.get('/products/edit-products/:id',verifyLogin,async(req,res)=>{
+router.get("/products/edit-products/:id", verifyLogin, async (req, res) => {
   const categories = await db().collection("category").find().toArray();
-  let products = await productHelpers.getProductDetails(req.params.id)
-  res.render("admin/products/edit-products",{products,categories})
-})
+  let products = await productHelpers.getProductDetails(req.params.id);
+  res.render("admin/products/edit-products", { products, categories });
+});
 
-router.post('/products/edit-products/:id',verifyLogin,(req,res)=>{
-  let id = req.params.id
-  productHelpers.updateProduct(req.params.id,req.body).then(()=>{
+router.post("/products/edit-products/:id", verifyLogin, (req, res) => {
+  let id = req.params.id;
+  productHelpers.updateProduct(req.params.id, req.body).then(() => {
     req.session.adminSuccessMsg = "Successfully updated";
 
-    if (req.files && 'image' in req.files) {
+    if (req.files && "image" in req.files) {
       let image = req.files.image;
-      image.mv('./public/img/' + id + '.jpg');
+      image.mv("./public/img/" + id + ".jpg");
     }
 
-    res.redirect("/admin/products")
-  })
-})
+    res.redirect("/admin/products");
+  });
+});
 
 //______________________Users Section______________________//
 
-
-
-router.get('/user', verifyLogin, async (req, res) => {
+router.get("/user", verifyLogin, async (req, res) => {
   try {
     const users = await userHelpers.getAllUsers();
-    res.render('admin/user/view-users', {
+    res.render("admin/user/view-users", {
       users,
       successMsg: req.session.adminSuccessMsg,
     });
@@ -211,25 +209,23 @@ router.get('/user', verifyLogin, async (req, res) => {
   }
 });
 
-
-router.get('/user/block/:id', verifyLogin, async (req, res) => {
+router.get("/user/block/:id", verifyLogin, async (req, res) => {
   try {
     const userId = req.params.id;
     await userHelpers.blockUser(userId);
-    req.session.adminSuccessMsg = 'User Blocked successfully';
-    res.redirect('/admin/user');
+    req.session.adminSuccessMsg = "User Blocked successfully";
+    res.redirect("/admin/user");
   } catch (error) {
     console.log(error);
   }
 });
 
-
-router.get('/user/unblock/:id', verifyLogin, async (req, res) => {
+router.get("/user/unblock/:id", verifyLogin, async (req, res) => {
   try {
     const userId = req.params.id;
     await userHelpers.unblockUser(userId);
-    req.session.adminSuccessMsg = 'User Unlocked successfully';
-    res.redirect('/admin/user');
+    req.session.adminSuccessMsg = "User Unlocked successfully";
+    res.redirect("/admin/user");
   } catch (error) {
     console.log(error);
   }
@@ -237,10 +233,18 @@ router.get('/user/unblock/:id', verifyLogin, async (req, res) => {
 
 //___________________Order section__________________//
 
-router.get('/orders',verifyLogin,async(req,res)=>{
-  let orders = await orderHelpers.getAllOrders()
-  console.log("orders in admin=======>",orders);
-      res.render('admin/orders/view-orders',{orders}) 
-})
+router.get("/orders", verifyLogin, async (req, res) => {
+  let orders = await orderHelpers.getOrderListWithUserDetails();
+  console.log("orders in admin=======>", orders);
+  res.render("admin/orders/view-orders", { orders });
+});
+
+router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
+  console.log("hello entered to route ");
+  // let orderDetails = await orderHelpers.fetchOrderDetailsWithProduct(req.params.id);
+  let orderDetails = await orderHelpers.getOrderDetailsWithProduct(req.params.id);
+  console.log('result orderDetails',orderDetails);
+  res.render("admin/orders/view-order-products", { orderDetails });
+});
 
 module.exports = router;

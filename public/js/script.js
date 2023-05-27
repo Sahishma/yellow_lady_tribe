@@ -1,4 +1,5 @@
 function addToCart(productId) {
+  //TODO : if user is not loged in then redirect to login
   $.ajax({
     url: "/add-to-cart/" + productId,
     method: "get",
@@ -7,8 +8,8 @@ function addToCart(productId) {
         let count = $("#cart-count").html();
         count = parseInt(count) + 1;
         $("#cart-count").html(count);
-      }
-      alert(response);
+        alert("successfully added");
+      } 
     },
   });
 }

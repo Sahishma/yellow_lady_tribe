@@ -13,7 +13,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       userData.password = await bcrypt.hash(userData.password, 10);
       console.log(userData.password, "enc pass");
-      console.log('collections.USER_COLLECTION', collections.USER_COLLECTION);
+      console.log("collections.USER_COLLECTION", collections.USER_COLLECTION);
       db()
         .collection(collections.USER_COLLECTION)
         .insertOne(userData)
@@ -65,9 +65,11 @@ module.exports = {
 
   getUserByEmail: async (email) => {
     try {
-      console.log('email inside getUserByEmail', email);
-      const user = await db().collection(collections.USER_COLLECTION).findOne({email:email });
-      console.log('getUserByEmail', user);
+      console.log("email inside getUserByEmail", email);
+      const user = await db()
+        .collection(collections.USER_COLLECTION)
+        .findOne({ email: email });
+      console.log("getUserByEmail", user);
       return user;
     } catch (error) {
       console.log(error);
@@ -76,7 +78,9 @@ module.exports = {
 
   getUserByPhoneNo: async (phoneNo) => {
     try {
-      const user = await db().collection(collections.USER_COLLECTION).findOne({phone:phoneNo });
+      const user = await db()
+        .collection(collections.USER_COLLECTION)
+        .findOne({ phone: phoneNo });
       return user;
     } catch (error) {
       console.log(error);
@@ -340,7 +344,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       console.log(order, products, total);
       let status = order.payment === "COD" ? "placed" : "pending";
-      console.log("status--------->",status);
+      console.log("status--------->", status);
       let orderObj = {
         deliveryDetails: {
           firstName: order.firstName,
@@ -358,17 +362,17 @@ module.exports = {
         status: status,
         date: new Date(),
       };
-      console.log("status in orderObj-------->",status)
+      console.log("status in orderObj-------->", status);
       db()
         .collection(collections.ORDER_COLLECTION)
         .insertOne(orderObj)
         .then((response) => {
-        // const orderId = response.insertedId;
+          // const orderId = response.insertedId;
           db()
             .collection(collections.CART_COLLECTION)
             .deleteOne({ user: new ObjectId(order.userId) });
-          resolve(); 
-          console.log("status in orderObj222222-------->",status)
+          resolve(response);
+          console.log("status in orderObj222222-------->", status);
         });
     });
   },
@@ -386,13 +390,14 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       let orders = await db()
         .collection(collections.ORDER_COLLECTION)
-        .find({ userId: new ObjectId(userId)}).toArray();
+        .find({ userId: new ObjectId(userId) })
+        .toArray();
       resolve(orders);
     });
   },
 
   getOrderProducts: (orderId) => {
-    console.log("is order id received to get ordered product? ====>",orderId);
+    console.log("is order id received to get ordered product? ====>", orderId);
     return new Promise(async (resolve, reject) => {
       let orderItems = await db()
         .collection(collections.ORDER_COLLECTION)
@@ -426,8 +431,8 @@ module.exports = {
           },
         ])
         .toArray();
-        console.log("ordered items====>>>>",orderItems)
+      console.log("ordered items====>>>>", orderItems);
       resolve(orderItems);
     });
-  },  
+  },
 };

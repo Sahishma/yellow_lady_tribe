@@ -1,24 +1,91 @@
-<section>
-    <div class="container mt-5">
-        <div class="row ">
-            {{!-- BOF listing of products --}}
-            {{#each products}}
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 pb-3">
-                <div class="card" style="width 15rem; height:24rem">
-                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                        <img class="card-img-top" style="height: 15rem;" src="/img/{{this.product._id}}.jpg" alt="">
-                    </div>
-                    <div class="card-body ">
-                        <h5 class="card-title">{{this.product.product_name}}</h5>
-                        <p class="card-text">Rs.{{this.product.price}}</p>
-                        <p class="card-text">Quantity:{{this.quantity}}</p>
 
+
+
+<section>
+    <!-- Cart Start -->
+    <div class="container-fluid pt-1">
+
+         {{# if userSuccessMsg}}
+                            <div class="alert alert-success">{{userSuccessMsg}}</div>
+        {{/if}}
+        <div class="row px-xl-5">
+            <div class="col-lg-8 table-responsive mb-5">
+                <h3>Order : {{orderDetails.orderId}}</h3>
+                    <table class="table table-bordered mb-0">
+                        <thead class="bg-secondary text-dark">
+                            <tr>
+                                <th>Products</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="align-middle">
+                            {{#each orderDetails.products}}
+                           
+                            <tr>
+                                <td ><img src="/img/{{this.productId}}.jpg" alt="" style="max-width: 50px; max-heigth: 50">  {{this.productName}}</td>
+                                <td class="align-middle">Rs. {{this.price}}</td>
+                                <td class="align-middle"> {{this.quantity}}</td>
+                               
+                                <td class="align-middle">{{this.price }} </td>
+                            </tr>
+                            {{/each}}
+
+
+                        </tbody>
+                    </table>
+            </div>
+            <div class="col-lg-4">
+
+                <div class="card border-secondary mb-5">
+                    {{!-- <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                    </div> --}}
+                    <div class="card-body">
+
+                        <h3>Shipping Address</h3>
+                        <div class="d-flex flex-column align-items-left justify-content-center" style="min-height: 150px">
+                            <div class="d-inline-flex">
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Name:</strong> <span>{{orderDetails.deliveryDetails.firstName}} {{orderDetails.deliveryDetails.lastName}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Address:</strong> <span>{{orderDetails.deliveryDetails.address}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>City:</strong> <span>{{orderDetails.deliveryDetails.city}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>State:</strong> <span>{{orderDetails.deliveryDetails.state}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Pincode:</strong> <span>{{orderDetails.deliveryDetails.pincode}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Phone Number:</strong> <span>{{orderDetails.deliveryDetails.mobile}}</span></li>
+                                    <!-- Add more order details as needed -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex flex-column align-items-left justify-content-center" style="min-height: 150px">
+                            <div class="d-inline-flex">
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Payment Method:</strong> <span>{{orderDetails.payment}}</span></li>
+                                    <li style="margin-bottom: 10px; text-align: left;"><strong>Order Date:</strong> <span>{{orderDetails.date}}</span></li>
+
+                                    <!-- Add more order details as needed -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <div class="d-flex justify-content-between mt-2">
+                            <h5 class="font-weight-bold">Total</h5>
+                            <h5 class="font-weight-bold">Rs. {{orderDetails.totalAmount}}</h5>
+                        </div>
                     </div>
                 </div>
             </div>
-            {{/each}}
-            {{!--EOF listing of products --}}
-
         </div>
     </div>
+    <!-- Cart End -->
+
+
 </section>

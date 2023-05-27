@@ -1,0 +1,33 @@
+
+
+<!-- Sign In Start -->
+<div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <a href="/" class="">
+                        <h3 class="text-dark">YellOw</h3>
+                    </a>
+                    {{! <h3>LogIn</h3> }}
+                </div>
+                <form action="/otp-validate" method="post" id="login_form">
+                    {{!-- correction --}}
+                    <div class="form-floating mb-4">
+                        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Enter Phone Number Here" />
+                        <label for="floatingPassword">Phone Number</label>
+                        <div class="error" id="error_msg_password"> </div>
+                    </div>
+                    <a  class="btn btn-primary py-3 w-100 mb-4" href="/otp-validate">Next</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sign In End -->
+
+<script src="js/main.js"></script>
+<script src="/js/registration.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
