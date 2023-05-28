@@ -4,21 +4,32 @@
 <div class="container-fluid">
     <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
         <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-            <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+            <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3 border">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <a href="/" class="">
-                        <h3 class="text-dark">YellOw</h3>
+                        <h3 class="text-primary">YellOw</h3>
                     </a>
-                    {{! <h3>LogIn</h3> }}
+                     <h5>OTP-LogIn</h5>
                 </div>
                 <form action="/otp-validate" method="post" id="login_form">
                     {{!-- correction --}}
+                    {{# if userErrMsg}}
+                    <div class="alert alert-danger">{{userErrMsg}}</div>
+                    {{/if}}
+                    {{# if userSuccessMsg}}
+                    <div class="alert alert-success">{{userSuccessMsg}}</div>
+                    {{/if}}
+
+                    <input type="hidden" name="user_id" value="{{userIdForOtpLogin}}">
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP Here" />
+                        <input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP Here" />
                         <label for="otp">OTP</label>
                         <div class="error" id="error_msg_password"> </div>
                     </div>
                     <button type="submit" class="btn btn-primary py-3 w-100 mb-4" href="/otp-validate">Submit</button>
+                    <p class="text-center mb-0">
+                        <a href="/otp-login"> Back</a>
+                    </p>
 
                 </form>
             </div>
@@ -26,8 +37,3 @@
     </div>
 </div>
 <!-- Sign In End -->
-
-<script src="js/main.js"></script>
-<script src="/js/registration.js"></script>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>

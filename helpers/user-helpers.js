@@ -119,6 +119,119 @@ module.exports = {
     }
   },
 
+  generateUserLoginOtp: async (userId, phoneNumber) => {
+    console.log("userid from generateUserLoginOtp", userId);
+    const otp = Math.floor(1000 + Math.random() * 9000);
+
+    //BOF SENT SMS
+    const sentTo = '+91'+phoneNumber;
+    const sentMessage = otp + ' is your otp for login to yellOw.';
+    console.log('sentTo',sentTo);
+
+    const accountSid = "ACdaa333b52d37048f1ff22285675918f5";
+    const authToken = "e56d1fbec755e2a65f3afcc23bcfbecf";
+    const client = require("twilio")(accountSid, authToken);
+    client.messages
+      .create({
+        body: sentMessage,
+        from: "+13158738602",
+        to: sentTo,
+      });
+      // .then((message) => console.log(message.sid));
+      //EOF SENT SMS
+
+
+    return new Promise((resolve, reject) => {
+      db()
+        .collection(collections.OTP_COLLECTION)
+        .deleteMany({ user_id: userId })
+        .then((response) => {
+          db()
+            .collection(collections.OTP_COLLECTION)
+            .insertOne({
+              user_id: new ObjectId(userId),
+              otp: otp,
+            })
+            .then((response) => {
+              console.log("response from generateUserLoginOtp", response);
+              resolve(response);
+            });
+        });
+    });
+  },
+
+  // otpValidate: (userId, otp) => {
+  //   console.log("user id ", userId);
+  //   console.log("otp", otp);
+  //   return new Promise(async (resolve, reject) => {
+  //     let checkOtp = await db()
+  //       .collection(collections.OTP_COLLECTION)
+  //       .findOne({ otp: otp })
+  //       .then((response) => {
+  //         console.log("checking otp", response);
+  //         resolve(response);
+  //       });
+  //   });
+  // },
+
+  // otpValidate: async (userId, otp) => {
+  //   console.log('userId otpValidate', userId);
+  //   console.log('otp otpValidate', otp);
+  //   try {
+  //     const checkOtp = await db()
+  //       .collection(collections.OTP_COLLECTION)
+  //       // .findOne({otp:otp});
+  //       .findOne({user_id: new ObjectId(userId)});
+  //       console.log('checkOtp details from helper function',checkOtp);
+  //     if (checkOtp.otp == otp) {
+  //       // return "otp valiodated";
+  //       let user = await db()
+  //       .collection(collections.USER_COLLECTION)
+  //       .findOne({ _id: new ObjectId(userId) });
+  //       console.log('user details from helper function', user);
+  //       response.user = user;
+  //       response.status = true;
+  //       return response;
+  //     }
+  //     else{
+  //       return "otp not validated"
+  //     }
+  //     return checkOtp;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // },
+
+  otpValidate: async (userId, otp) => {
+    try {
+      const otpCollection = db().collection(collections.OTP_COLLECTION);
+      const userCollection = db().collection(collections.USER_COLLECTION);
+
+      const checkOtp = await otpCollection.findOne({
+        user_id: new ObjectId(userId),
+      });
+
+      if (!checkOtp) {
+        return { status: false, status_code :1, message: "OTP not found" };
+      }
+
+      if (checkOtp.otp != otp) {
+        return { status: false, status_code :2, message: "Invalid OTP" };
+      }
+
+      const user = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+      if (!user) {
+        return { status: false, status_code :3, message: "User not found" };
+      }
+
+      return { status: true, status_code :4, message: "OTP validated", user };
+    } catch (error) {
+      console.log(error);
+      return { status: false, status_code :5, message: "An error occurred" };
+    }
+  },
+
   addToCart: (productId, userId) => {
     console.log("hello enter aadtocart", productId, userId);
     let proObj = {

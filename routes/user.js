@@ -1,7 +1,7 @@
 const express = require("express");
 const userHelpers = require("../helpers/user-helpers");
 const productHelpers = require("../helpers/product-helpers");
-const orderHelpers=require("../helpers/order-helpers");
+const orderHelpers = require("../helpers/order-helpers");
 const { db } = require("../config/connection");
 const { response } = require("../app");
 const router = express.Router();
@@ -21,6 +21,7 @@ const verifyLogin = (req, res, next) => {
 /* GET home page. */
 
 router.get("/", async (req, res) => {
+
   const products = await productHelpers.getAllProducts();
   const categories = await db().collection("category").find().toArray();
 
@@ -105,11 +106,11 @@ router.get("/login", (req, res) => {
   } else {
     res.set("Cache-Control", "no-cache, no-store, must-revalidate");
     res.render("user/login", {
-      loginErr: req.session.userLoginErr,
+      userErrMsg: req.session.userErrMsg,
       layout: "userLayout",
       noNeedNav: true,
     });
-    req.session.userLoginErr = false;
+    req.session.userErrMsg = false;
   }
 });
 router.post("/login", async (req, res) => {
@@ -118,7 +119,7 @@ router.post("/login", async (req, res) => {
   const user = await userHelpers.getUserByUsername(username);
   if (user && user.status === true) {
     // User is blocked, return an appropriate response or error message
-    req.session.userLoginErr = "Your account has been blocked.";
+    req.session.userErrMsg = "Your account has been blocked.";
     return res.redirect("/login");
   }
   userHelpers.doLogin(req.body).then((response) => {
@@ -127,39 +128,81 @@ router.post("/login", async (req, res) => {
       req.session.user.loggedIn = true;
       res.redirect("/");
     } else {
-      req.session.userLoginErr = "Invalid User name or Password";
+      req.session.userErrMsg = "Invalid User name or Password";
       res.redirect("/login");
     }
   });
 });
 
 //----------------------OTP---------------------------//
-router.get("/otp-login",(req,res)=>{
-  console.log("otppppppppp");
-  res.render("user/otp-login",{layout: "userLayout"})
-})
+router.get("/otp-login", (req, res) => {
+  res.render("user/otp-login", {
+    userErrMsg: req.session.userErrMsg,
+    layout: "userLayout",
+    noNeedNav: true,
+  });
+  req.session.userErrMsg = false;
 
-router.post('/otp-login',(req,res)=>{
-  console.log("otp body",req.body);
+});
+
+router.post("/otp-login", async (req, res) => {
+  const phoneNumber = req.body.phoneNumber;
+  const user = await userHelpers.getUserByPhoneNo(phoneNumber);
+
+  if (user == null) {
+    req.session.userErrMsg = "User not found with the entered mobile number";
+    return res.redirect("/otp-login");
+  }
+  console.log('USER DETAILS', user._id);
+  let generateOtp = await userHelpers.generateUserLoginOtp(user._id, phoneNumber);
+  console.log("generateOtp",generateOtp);
+  if(generateOtp.acknowledged){
+    req.session.userIdForOtpLogin = user._id;
+    req.session.userSuccessMsg = "OTP sent to your mobile number";
+    res.redirect('/otp-validate')
+  }
+
+
 
   //1.phone number from  form
-  //2. random 6 digit number creatde by you 
+  //2. random 6 digit number creatde by you
 
   // var otp = '123456';
   // create collection with fields phone no, otp an d store to it
- 
-  res.redirect('/otp-validate')
-})
 
-router.get('/otp-validate',(req,res)=>{
+  // res.redirect("/otp-validate");
+});
+
+router.get("/otp-validate", (req, res) => {
   console.log("hello otp validate");
-  res.render('user/otp-validate')
-})
+  if (!req.session.userIdForOtpLogin) {
+    res.redirect("/otp-login");
+  }
+  res.render("user/otp-validate", { 
+    userIdForOtpLogin: req.session.userIdForOtpLogin,
+    layout: "userLayout", 
+    noNeedNav: true 
+  });
+  delete req.session.userIdForOtpLogin;
 
-router.post('/otp-login',(req,res)=>{
-  console.log("otp validate post",req.body);
-  res.redirect('/')
-})
+});
+
+router.post("/otp-validate", async(req, res) => {
+  console.log("otp validate post", req.body);
+  const userId = req.body.user_id
+  const otp = req.body.otp;
+  const otpValidate = await userHelpers.otpValidate(userId,otp);
+
+  if (otpValidate.status) {
+    req.session.user = otpValidate.user;
+    req.session.user.loggedIn = true;
+    res.redirect("/");
+  } else {
+    req.session.userErrMsg = "Invalid Otp";
+    res.redirect("/otp-login");
+  }
+  // res.redirect("/");
+});
 
 //---------------------CART--------------------------//
 
@@ -213,7 +256,6 @@ router.get("/cart", verifyLogin, async (req, res) => {
 
 //TODO : if user is not loged in then redirect to login
 
-
 router.get("/add-to-cart/:id", (req, res) => {
   console.log("api call");
   userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
@@ -250,8 +292,7 @@ router.post("/checkout", verifyLogin, async (req, res) => {
   userHelpers.checkOut(req.body, products, totalPrice).then((response) => {
     console.log("is status is there in response ?  -------->", response);
     req.session.orderPlacedSuccessMsg = "Order Placed Successfully";
-    res.json({ status: true, orderId : response.insertedId });
-
+    res.json({ status: true, orderId: response.insertedId });
   });
   console.log(req.body);
 });
@@ -265,7 +306,7 @@ router.get("/order-success", verifyLogin, (req, res) => {
   });
 });
 
-router.get("/orders",verifyLogin, async (req, res) => {
+router.get("/orders", verifyLogin, async (req, res) => {
   let orders = await userHelpers.getUserOrders(req.session.user._id);
   console.log("orders---------->", orders);
   res.render("user/orders", {
@@ -275,10 +316,12 @@ router.get("/orders",verifyLogin, async (req, res) => {
   });
 });
 
-router.get("/view-order-products/:id",verifyLogin, async (req, res) => {
-  let orderDetails = await orderHelpers.getOrderDetailsWithProduct(req.params.id);
-  console.log('result orderDetails',orderDetails);
-  let userDetails=req.session.user
+router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
+  let orderDetails = await orderHelpers.getOrderDetailsWithProduct(
+    req.params.id
+  );
+  console.log("result orderDetails", orderDetails);
+  let userDetails = req.session.user;
   res.render("user/view-order-products", {
     user: req.session.user,
     layout: "userLayout",
@@ -291,14 +334,13 @@ router.get("/view-order-products/:id",verifyLogin, async (req, res) => {
 
 //--------------------product detail---------------------------//
 
-
-router.get("/product-detail/:id",async(req, res) => {
-  let product=await productHelpers.getProductDetails(req.params.id);
+router.get("/product-detail/:id", async (req, res) => {
+  let product = await productHelpers.getProductDetails(req.params.id);
   // console.log("id passed in req params",req.params.id);
-    res.render("user/product-detail", {
-      layout: "userLayout",
-      user: req.session.user,
-      product
+  res.render("user/product-detail", {
+    layout: "userLayout",
+    user: req.session.user,
+    product,
   });
 });
 
