@@ -205,8 +205,11 @@ module.exports = {
       ];
 
       // Execute the aggregation pipeline
-      const result = await db().collection(collections.ORDER_COLLECTION).aggregate(pipeline).toArray();
-      console.log('Execute the aggregation pipeline', result);
+      const result = await db()
+        .collection(collections.ORDER_COLLECTION)
+        .aggregate(pipeline)
+        .toArray();
+      console.log("Execute the aggregation pipeline", result);
 
       // If order is not found, return null or handle the error accordingly
       if (result.length === 0) {
@@ -267,21 +270,21 @@ module.exports = {
             from: "product",
             localField: "products.item",
             foreignField: "_id",
-            as: "products",
+            as: "productDetails",
           },
         },
       ];
-  
+
       const result = await db()
         .collection(collections.ORDER_COLLECTION)
         .aggregate(pipeline)
         .toArray();
-  
+
       if (result.length === 0) {
         // If order not found, return null or handle the error accordingly
         return null;
       }
-  
+
       const orderDetails = {
         orderId: result[0]._id.toHexString(),
         deliveryDetails: result[0].deliveryDetails,
@@ -295,14 +298,19 @@ module.exports = {
           email: result[0].user.email,
           phone: result[0].user.phone,
         },
-        products: result[0].products.map((product) => ({
-          productId: product._id.toHexString(),
-          productName: product.product_name,
-          price: product.price,
-          quantity: product.quantity,
-        })),
+        products: result[0].products.map((product) => {
+          const matchedProduct = result[0].productDetails.find(
+            (p) => p._id.toHexString() === product.item.toHexString()
+          );
+          return {
+            productId: product.item.toHexString(),
+            productName: matchedProduct.product_name,
+            price: matchedProduct.price,
+            quantity: product.quantity,
+          };
+        }),
       };
-  
+
       return orderDetails;
     } catch (error) {
       // Handle any errors that occurred during the aggregation process
@@ -310,9 +318,6 @@ module.exports = {
       return null;
     }
   },
-  
-  
-  
 
   getOrderListWithUserDetails: async () => {
     console.log("entered to ");
@@ -340,16 +345,15 @@ module.exports = {
             status: 1,
             date: 1,
             username: "$user.username",
-          
           },
         },
       ];
-  
+
       const result = await db()
         .collection(collections.ORDER_COLLECTION)
         .aggregate(pipeline)
         .toArray();
-  
+
       const orderList = result.map((order) => ({
         orderId: order.orderId.toHexString(),
         payment: order.payment,
@@ -358,16 +362,29 @@ module.exports = {
         date: order.date,
         username: order.username,
       }));
-  
+
       return orderList;
     } catch (error) {
       // Handle any errors that occurred during the aggregation process
       console.error("Error fetching order list:", error);
       return [];
     }
-  }
-  
-  
-  
-  
+  },
+
+  updateStatus: (orderId, body) => {
+    console.log("entered to update status");
+    console.log("req.body.status", body.status);
+    return new Promise(async (resolve, reject) => {
+      let updateStatus = await db()
+        .collection(collections.ORDER_COLLECTION)
+        .updateOne(
+          { _id: new ObjectId(orderId) },
+          { $set: { status: body.status } }
+        )
+
+        .then((response) => {
+          resolve(response);
+        });
+    });
+  },
 };

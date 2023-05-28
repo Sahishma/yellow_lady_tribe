@@ -140,17 +140,24 @@ router.get("/otp-login",(req,res)=>{
 })
 
 router.post('/otp-login',(req,res)=>{
-  // const phoneNo=req.body.phoneNumber
+  console.log("otp body",req.body);
 
+  //1.phone number from  form
+  //2. random 6 digit number creatde by you 
+
+  // var otp = '123456';
+  // create collection with fields phone no, otp an d store to it
+ 
   res.redirect('/otp-validate')
 })
 
-router.get('/otp-validate',(req,re)=>{
-  res.render('/user/otp-validate')
+router.get('/otp-validate',(req,res)=>{
+  console.log("hello otp validate");
+  res.render('user/otp-validate')
 })
 
-router.post('/otp-validate',(req,res)=>{
-  // const otp = req.body.otp
+router.post('/otp-login',(req,res)=>{
+  console.log("otp validate post",req.body);
   res.redirect('/')
 })
 

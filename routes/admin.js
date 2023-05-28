@@ -133,7 +133,7 @@ router.get("/categories/delete-categories/:id", verifyLogin, (req, res) => {
 
 router.get("/products", verifyLogin, async (req, res) => {
   productHelpers.getAllProducts().then((products) => {
-    console.log("products:::::",products)
+    console.log("products:::::", products);
     res.render("admin/products/view-products", {
       products,
       successMsg: req.session.adminSuccessMsg,
@@ -241,10 +241,31 @@ router.get("/orders", verifyLogin, async (req, res) => {
 
 router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
   console.log("hello entered to route ");
-  // let orderDetails = await orderHelpers.fetchOrderDetailsWithProduct(req.params.id);
-  let orderDetails = await orderHelpers.getOrderDetailsWithProduct(req.params.id);
-  console.log('result orderDetails',orderDetails);
-  res.render("admin/orders/view-order-products", { orderDetails });
+  let orderDetails = await orderHelpers.fetchOrderDetailsWithProduct(
+    req.params.id
+  );
+  // let orderDetails = await orderHelpers.getOrderDetailsWithProduct(req.params.id);
+  console.log("result orderDetails", orderDetails);
+  res.render("admin/orders/view-order-products", {
+    orderDetails,
+    successMsg: req.session.adminSuccessMsg,
+    errorMsg: req.session.adminErrorMsg,
+  });
+  req.session.adminSuccessMsg = false;
+  req.session.adminErrorMsg = false;
+
+});
+
+router.post("/order/status-update/:id", async (req, res) => {
+  const updateResult = await orderHelpers.updateStatus(req.params.id, req.body);
+  console.log("updateResult", updateResult);
+  if (updateResult.acknowledged == true) {
+    req.session.adminSuccessMsg = "Status Updated Successfully";
+  } else {
+    req.session.adminErrorMsg = "Something went wrong";
+  }
+
+  res.redirect("/admin/view-order-products/" + req.params.id);
 });
 
 module.exports = router;

@@ -343,7 +343,7 @@ module.exports = {
   checkOut: (order, products, total) => {
     return new Promise((resolve, reject) => {
       console.log(order, products, total);
-      let status = order.payment === "COD" ? "placed" : "pending";
+      let status = order.payment === "COD" ? "Placed" : "Pending";
       console.log("status--------->", status);
       let orderObj = {
         deliveryDetails: {
