@@ -1,3 +1,21 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mt-4">
+    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+    <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
+  </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+
+
+
+
+
+
 <!-- Form Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
@@ -23,6 +41,13 @@
                         <label for="product_name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="product_name" name="product_name" required value="{{products.product_name}}">
+                        </div>
+                    </div>
+
+                     <div class="row mb-3">
+                        <label for="mrp" class="col-sm-2 col-form-label">MRP</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="mrp" name="mrp" required value="{{products.mrp}}">
                         </div>
                     </div>
 
@@ -59,12 +84,20 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <label for="description" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            {{!-- <input type="text" class="form-control" id="description" name="discription" required/> --}}
+                            <textarea class="form-control" name="description" id="description"  rows="5" >{{products.description}}</textarea>
+                        </div>
+                    </div>
+
 
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
-                        <img src="/img/{{products._id}}.jpg" alt="" style="width:100px;height:auto">
+                        <img src="/img/{{products._id}}.jpg" alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
                         <div class="col-sm-10">
-                            <input type="file" class="form-control" id="image" name="image" >
+                            <input type="file" class="form-control" id="image" name="image" onchange="viewImage(event)"  >
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary m-2">Update</button>
@@ -74,3 +107,9 @@
     </div>
 </div>
 <!-- Form End -->
+
+<script>
+   function viewImage(event){
+    document.getElementById('imgView').src=URL.createObjectURL(event.target.files[0])
+   } 
+</script>

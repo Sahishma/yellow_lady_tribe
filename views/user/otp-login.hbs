@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3 border">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <a href="/" class="">
+                        <h3 class="text-primary">YellOw</h3>
+                    </a>
+                    <h5>OTP-LogIn</h5>
+                </div>
+                <form action="/otp-login" method="post" id="otpLogin_form">
+                    {{# if userErrMsg}}
+                    <div class="alert alert-danger">{{userErrMsg}}</div>
+                    {{/if}}
+                    {{!-- correction --}}
+                    <div class="form-floating mb-4">
+                        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Enter Phone Number Here" />
+                        <label for="phoneNumber">Phone Number</label>
+                        <div class="error" id="error_msg_phoneNumber"> </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Next</button>
+                    <p class="text-center mb-0">Back to normal
+                        <a href="/login"> login</a>
+                    </p>
+                    <p class="text-center mb-0">Don't have an Account?
+                        <a href="/register">Register</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/otp-login.js"></script>

@@ -4,6 +4,18 @@ const { response } = require("../app");
 var ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
+
+   getAllCategories: () => {
+    return new Promise(async (resolve, reject) => {
+      let categories = await db()
+        .collection(collections.CATEGORY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(categories);
+    });
+  },
+
+
   addCategory: (category, callback) => {
     db()
       .collection(collections.CATEGORY_COLLECTION)
@@ -15,7 +27,9 @@ module.exports = {
 
   getCategoryById: async (categoryid, callback) => {
     try {
-      const category = await db().collection(collections.CATEGORY_COLLECTION).findOne({ _id: new ObjectId(categoryid) });
+      const category = await db()
+        .collection(collections.CATEGORY_COLLECTION)
+        .findOne({ _id: new ObjectId(categoryid) });
       if (!category) {
         throw new Error("Category not found");
       }
@@ -50,7 +64,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       db()
         .collection(collections.CATEGORY_COLLECTION)
-        .deleteOne({ _id:new ObjectId(categoryId) })
+        .deleteOne({ _id: new ObjectId(categoryId) })
         .then((response) => {
           resolve(response);
         });

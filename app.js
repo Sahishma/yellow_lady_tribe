@@ -53,6 +53,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(session({secret:'key',resave: false,saveUninitialized: true,cookie:{maxAge:600000}}));
 app.use(flash());
 app.use(fileUpload());
+// app.use(client());
 
 
 startDb()

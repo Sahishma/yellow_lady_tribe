@@ -1,3 +1,17 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mt-4">
+    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Products</li>
+  </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+
+
+
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
         <div class="col-12">
@@ -15,6 +29,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Product Name</th>
                                 <th scope="col">Category</th>
+                                <th scope="col">MRP</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Stock</th>
                                 <th scope="col">status</th>
@@ -29,6 +44,7 @@
                                 <th scope="row">{{@index}}</th>
                                 <td>{{this.product_name}}</td>
                                 <td>{{this.category_name}}</td>
+                                <td>{{this.mrp}}</td>
                                 <td>{{this.price}}</td>
                                 <td>{{this.stock}}</td>
                                 <td>{{this.status}}</td>

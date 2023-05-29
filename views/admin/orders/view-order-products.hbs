@@ -1,0 +1,156 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item"><a href="/admin/orders">Orders</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Order Detail</li>
+    </ol>
+</nav>
+<hr>
+{{!-- BOF breadcrumb --}}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Order Id : {{orderDetails.orderId}}</h3>
+            {{!-- <a href="">Show All</a> --}}
+        </div>
+
+        {{!-- <div class="row g-4"> --}}
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-light rounded h-100 p-1">
+                    <form action="/admin/order/status-update/{{orderDetails.orderId}}" method="post" id="addCategory_form">
+                        <div class="mb-3">
+                            <select class="form-select mb-3" id="status" name="status" required aria-label="Default select example">
+                                <option value="Placed" {{#isEqual 'Placed' orderDetails.status}}selected{{/isEqual}}>Placed</option>
+                                <option value="Packed" {{#isEqual 'Packed' orderDetails.status}}selected{{/isEqual}}>Packed</option>
+                                <option value="Shipped" {{#isEqual 'Shipped' orderDetails.status}}selected{{/isEqual}}>Shipped</option>
+                                <option value="Delivered" {{#isEqual 'Delivered' orderDetails.status}}selected{{/isEqual}}>Delivered</option>
+                                <option value="Cancelled" {{#isEqual 'Cancelled' orderDetails.status}}selected{{/isEqual}}>Cancelled</option>
+                            </select>
+                            
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        {{!-- </div> --}}
+
+    </div>
+
+
+</div>
+
+
+<!-- Sales Chart Start -->
+<div class="container-fluid pt-4 px-4">
+    <h4 class="mb-0">Order Id : {{orderDetails.orderId}}</h4>
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Shipping Address</h6>
+                    {{!-- <a href="">Show All</a> --}}
+                </div>
+                <div class="d-flex flex-column align-items-left justify-content-center" style="min-height: 150px">
+                    <div class="d-inline-flex">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Name:</strong> <span>{{orderDetails.deliveryDetails.firstName}} {{orderDetails.deliveryDetails.lastName}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Address:</strong> <span>{{orderDetails.deliveryDetails.address}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>City:</strong> <span>{{orderDetails.deliveryDetails.city}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>State:</strong> <span>{{orderDetails.deliveryDetails.state}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Pincode:</strong> <span>{{orderDetails.deliveryDetails.pincode}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Phone Number:</strong> <span>{{orderDetails.deliveryDetails.mobile}}</span></li>
+                            <!-- Add more order details as needed -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h6 class="mb-0">Other Details</h6>
+                    {{!-- <a href="">Show All</a> --}}
+                </div>
+                <div class="d-flex flex-column align-items-left justify-content-center " style="min-height: 150px">
+                    <div class="d-inline-flex">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Payment Method:</strong> <span>{{orderDetails.payment}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Order Date:</strong> <span>{{orderDetails.date}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Total Amount:</strong> <span>Rs.{{orderDetails.totalAmount}}</span></li>
+
+                            <!-- Add more order details as needed -->
+                        </ul>
+                    </div>
+                </div>
+                <div class="d-flex flex-column align-items-left justify-content-center" style="min-height: 150px">
+                    <div class="d-inline-flex">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>User ID:</strong> <span> {{orderDetails.user.userId}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>User Name:</strong> <span> {{orderDetails.user.username}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Email:</strong> <span>{{orderDetails.user.email}}</span></li>
+                            <li style="margin-bottom: 10px; text-align: left;"><strong>Phone Number:</strong> <span>{{orderDetails.user.phone}}</span></li>
+
+                            <!-- Add more order details as needed -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Sales Chart End -->
+
+
+<!-- Recent Sales Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-light rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h6 class="mb-0">Products</h6>
+            {{!-- <a href="">Show All</a> --}}
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{!-- {{#each orderDetails.products}}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 pb-3">
+                        <div class="card" style="width 15rem; height:24rem">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <img class="card-img-top" style="height: 15rem;" src="/img/{{this.productId}}.jpg" alt="">
+                            </div>
+                            <div class="card-body ">
+                                <h5 class="card-title">{{this.productName}}</h5>
+                                <p class="card-text">Rs.{{this.price}}</p>
+                                <p class="card-text">Quantity:{{this.quantity}}</p>
+
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}} --}}
+
+                    {{#each orderDetails.products}}
+                    <tr>
+                        <td>
+                            <img class="card-img-top" style="max-height: 100px; max-width:100px" src="/img/{{this.productId}}.jpg" alt="">
+
+                            {{this.productName}}
+                        </td>
+                        <td>Rs.{{this.price}}</td>
+                        <td>{{this.quantity}}</td>
+                    </tr>
+                    {{/each}}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Recent Sales End -->

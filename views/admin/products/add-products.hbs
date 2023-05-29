@@ -1,17 +1,30 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Add Product</li>
+    </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+
+
+
 <!-- Form Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 <h6 class="mb-4">Add Product</h6>
-                <form action="/admin/products/add-products" method="post" id="addProducts_form"
-                    enctype="multipart/form-data">
+                <form action="/admin/products/add-products" method="post" id="addProducts_form" enctype="multipart/form-data">
 
                     <div class="row mb-3">
                         <label for="category_id" class="col-sm-2 col-form-label">Category</label>
                         <div class="col-sm-10">
-                            <select class="form-select mb-3" id="category_id" name="category_id" aria-required=""
-                                aria-label="Default select example">
+                            <select class="form-select mb-3" id="category_id" name="category_id" aria-required="" aria-label="Default select example">
                                 {{#each categories}}
                                 <option value="{{this._id}}">{{this.category_name}}</option>
                                 {{/each}}
@@ -22,7 +35,14 @@
                     <div class="row mb-3">
                         <label for="product_name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="product_name" name="product_name" required/>
+                            <input type="text" class="form-control" id="product_name" name="product_name" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="mrp" class="col-sm-2 col-form-label">MRP</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="mrp" name="mrp" required />
                         </div>
                     </div>
 
@@ -43,13 +63,21 @@
                     <div class="row mb-3">
                         <label for="status" class="col-sm-2 col-form-label">Status</label>
                         <div class="col-sm-10">
-                            <select class="form-select mb-3" id="status" name="status" required
-                                aria-label="Default select example">
+                            <select class="form-select mb-3" id="status" name="status" required aria-label="Default select example">
                                 <option value="In Stock">In Stock</option>
                                 <option value="Out Of Stock">Out Of Stock</option>
                             </select>
                         </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <label for="description" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            {{!-- <input type="text" class="form-control" id="discription" name="discription" required /> --}}
+                            <textarea class="form-control" name="description" id="description" rows="5"></textarea>
+                        </div>
+                    </div>
+
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <div class="col-sm-10">
@@ -57,7 +85,7 @@
                         </div>
                     </div>
 
-                    
+
 
                     <button type="submit" class="btn btn-primary m-2">Add New</button>
                 </form>

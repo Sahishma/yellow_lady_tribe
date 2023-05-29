@@ -4,7 +4,6 @@ const { response } = require("../app");
 var ObjectId = require("mongodb").ObjectId;
 // const { ObjectId } = require('mongodb'); // Import ObjectId from the MongoDB package
 
-
 module.exports = {
   addproduct: (product, callback) => {
     db()
@@ -14,7 +13,6 @@ module.exports = {
         callback(data.insertedId.toString());
       });
   },
-
 
   // getAllProducts: () => {
   //   return new Promise(async (resolve, reject) => {
@@ -26,7 +24,6 @@ module.exports = {
   //   });
   // },
 
-
   getAllProducts: () => {
     return new Promise(async (resolve, reject) => {
       let products = await db()
@@ -37,50 +34,51 @@ module.exports = {
               from: collections.CATEGORY_COLLECTION,
               localField: "category_id",
               foreignField: "_id",
-              as: "category"
-            }
+              as: "category",
+            },
           },
           {
             $unwind: {
               path: "$category",
-              preserveNullAndEmptyArrays: true
-            }
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $addFields: {
-              categoryId: { $toObjectId: "$category_id" } // Convert category_id to ObjectId
-            }
+              categoryId: { $toObjectId: "$category_id" }, // Convert category_id to ObjectId
+            },
           },
           {
             $lookup: {
               from: collections.CATEGORY_COLLECTION,
               localField: "categoryId",
               foreignField: "_id",
-              as: "category"
-            }
+              as: "category",
+            },
           },
           {
             $unwind: {
               path: "$category",
-              preserveNullAndEmptyArrays: true
-            }
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $project: {
               _id: 1,
               product_name: 1,
+              mrp:1,
               price: 1,
               stock: 1,
               status: 1,
-              category_name: "$category.category_name"
-            }
-          }
+              category_name: "$category.category_name",
+            },
+          },
         ])
         .toArray();
       resolve(products);
     });
   },
-  
+
   getProductsByCategory: (categoryId) => {
     return new Promise(async (resolve, reject) => {
       let products = await db()
@@ -91,37 +89,36 @@ module.exports = {
               from: collections.CATEGORY_COLLECTION,
               localField: "category_id",
               foreignField: "_id",
-              as: "category"
-            }
+              as: "category",
+            },
           },
           {
             $unwind: {
               path: "$category",
-              preserveNullAndEmptyArrays: true
-            }
+              preserveNullAndEmptyArrays: true,
+            },
           },
           {
             $match: {
-              category_id: categoryId // Filter by category_id
-            }
+              category_id: categoryId, // Filter by category_id
+            },
           },
           {
             $project: {
               _id: 1,
               product_name: 1,
+              mrp:1,
               price: 1,
               stock: 1,
               status: 1,
-              category_name: "$category.category_name"
-            }
-          }
+              category_name: "$category.category_name",
+            },
+          },
         ])
         .toArray();
       resolve(products);
     });
   },
-  
-  
 
   deleteProduct: (productId) => {
     return new Promise((resolve, reject) => {
@@ -138,29 +135,34 @@ module.exports = {
       db()
         .collection(collections.PRODUCT_COLLECTION)
         .findOne({ _id: new ObjectId(productId) })
-        .then((products) => {
-          console.log(products);
-          resolve(products);
+        .then((product) => {
+          console.log(product);
+          resolve(product);
         });
     });
   },
 
-  updateProduct:(productId,productDetails)=>{
-    return new Promise((resolve,reject)=>{
-        db().collection(collections.PRODUCT_COLLECTION)
-        .updateOne({_id:new ObjectId(productId)},{
-            $set:{
-                product_name:productDetails.product_name,
-                price:productDetails.price,
-                category_id:productDetails.category_id,
-                stock:productDetails.stock,
-                status:productDetails.status
-            }
-        }).then((response)=>{
-            resolve()
-        })
-    })
-  }
-
- 
+  updateProduct: (productId, productDetails) => {
+    return new Promise((resolve, reject) => {
+      db()
+        .collection(collections.PRODUCT_COLLECTION)
+        .updateOne(
+          { _id: new ObjectId(productId) },
+          {
+            $set: {
+              product_name: productDetails.product_name,
+              mrp: productDetails.mrp,
+              price: productDetails.price,
+              category_id: productDetails.category_id,
+              stock: productDetails.stock,
+              status: productDetails.status,
+              discription: productDetails.discription,
+            },
+          }
+        )
+        .then((response) => {
+          resolve();
+        });
+    });
+  },
 };

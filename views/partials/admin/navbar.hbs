@@ -93,4 +93,10 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {{/if}}
+{{# if errorMsg}}
+<div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+    {{errorMsg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
 <!-- Navbar End -->

@@ -16,11 +16,18 @@
                         {{#each categories}}
                         <a href="/products/{{this._id}}" class="nav-item nav-link">{{this.category_name}}</a> 
                         {{/each}}
-
                     </div>
+
                     <div class="navbar-nav ml-auto py-0">
+
+                       
+
                         {{# if user}}
-                        <a href="/logout" class="nav-item nav-link">LogOut</a>
+                        <a class="nav-item nav-link" href="/orders">My Orders</a>
+                        <span class="nav-item nav-link"> <i class="fas fa-user text-primary"></i> {{user.username}}</span>
+                        <a href="/logout" class="nav-item nav-link">  <i class="fas fa-sign-out-alt text-primary"></i> LogOut</a>
+
+                       
 
                         {{else}}
                         <a class="nav-item nav-link" href="/login">Login</a>
