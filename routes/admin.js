@@ -83,8 +83,16 @@ router.get("/categories/add", verifyLogin, (req, res) => {
 
 router.post("/categories/add", verifyLogin, (req, res) => {
   categoryHelpers.addCategory(req.body, (insertedId) => {
-    req.session.adminSuccessMsg = "Successfully Added";
-    res.redirect("/admin/categories");
+    console.log("files________.",req.files);
+    let image = req.files.image;
+    image.mv("./public/img/category/" + insertedId + ".jpg", (err,done)=>{
+      if(!err){
+        req.session.adminSuccessMsg = "Successfully Added";
+        res.redirect("/admin/categories");
+      }else{
+        console.log("error while updating img",err);
+      }
+    })
   });
 });
 
@@ -144,7 +152,7 @@ router.get("/products", verifyLogin, async (req, res) => {
 
 //add products
 router.get("/products/add-products", verifyLogin, async (req, res) => {
-  const categories = await db().collection("category").find().toArray();
+  const categories = await categoryHelpers.getAllCategories()
   res.render("admin/products/add-products", { categories });
 });
 
