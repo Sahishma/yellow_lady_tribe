@@ -4,6 +4,18 @@ const { response } = require("../app");
 var ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
+
+   getAllCategories: () => {
+    return new Promise(async (resolve, reject) => {
+      let categories = await db()
+        .collection(collections.CATEGORY_COLLECTION)
+        .find()
+        .toArray();
+      resolve(categories);
+    });
+  },
+
+
   addCategory: (category, callback) => {
     db()
       .collection(collections.CATEGORY_COLLECTION)

@@ -2,6 +2,7 @@ const express = require("express");
 const userHelpers = require("../helpers/user-helpers");
 const productHelpers = require("../helpers/product-helpers");
 const orderHelpers = require("../helpers/order-helpers");
+const categoryHelpers = require("../helpers/category-helpers");
 const { db } = require("../config/connection");
 const { response } = require("../app");
 const router = express.Router();
@@ -23,7 +24,7 @@ const verifyLogin = (req, res, next) => {
 router.get("/", async (req, res) => {
 
   const products = await productHelpers.getAllProducts();
-  const categories = await db().collection("category").find().toArray();
+  const categories = await categoryHelpers.getAllCategories()
 
   let user = req.session.user;
   console.log("user session details", user);
@@ -42,8 +43,12 @@ router.get("/", async (req, res) => {
 
 router.get("/products/:category_id", async (req, res) => {
   const category_id = req.params.category_id;
-  const categories = await db().collection("category").find().toArray();
+  const categories = await categoryHelpers.getAllCategories()
   const reqUrl = req.url;
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
   let user = req.session.user;
   productHelpers.getProductsByCategory(category_id).then((products) => {
     res.render("user/list-products-by-category", {
@@ -52,6 +57,7 @@ router.get("/products/:category_id", async (req, res) => {
       reqUrl,
       user,
       layout: "userLayout",
+      cartCount,
     });
     req.session.adminSuccessMsg = false;
   });
@@ -207,7 +213,11 @@ router.post("/otp-validate", async(req, res) => {
 //---------------------CART--------------------------//
 
 router.get("/cart", verifyLogin, async (req, res) => {
-  const categories = await db().collection("category").find().toArray();
+  const categories = await categoryHelpers.getAllCategories()
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
   let user = req.session.user;
   try {
     let products = await userHelpers.getCartProducts(req.session.user._id);
@@ -224,6 +234,7 @@ router.get("/cart", verifyLogin, async (req, res) => {
       userId: req.session.user._id,
       total,
       user,
+      cartCount,
     });
   } catch (error) {
     // Handle any errors that occurred during the process
@@ -231,28 +242,6 @@ router.get("/cart", verifyLogin, async (req, res) => {
     res.render("error", { error });
   }
 });
-
-// router.get("/cart",verifyLogin,async(req,res)=>{
-//   let products = await userHelpers.getCartProducts(req.session.user._id)
-//   let total=await userHelpers.getTotalAmount(req.session.user._id)
-//   res.render('user/cart',{loginErr: req.session.userLoginErr,
-//     layout: "userLayout",products,user:req.session.user})
-// });
-// adding products to db
-
-// router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
-//   console.log("API call");
-
-//   if (req.session.user) {
-//     // User is logged in, add to cart and redirect to cart page
-//     userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
-//       res.json({ status: true,});
-//     });
-//   } else {
-//     // User is not logged in, redirect to login page
-//     res.json({ status: false, redirectUrl: '/login' });
-//   }
-// });
 
 //TODO : if user is not loged in then redirect to login
 
@@ -272,17 +261,29 @@ router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
   });
 });
 
+// remove from cart
+
+
+
+
 //-------------------Checkout----------------//
 
 router.get("/checkout", verifyLogin, async (req, res) => {
   console.log("get /checkout");
   console.log("user id from get /checkout", req.session.user._id);
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
+  const categories = await categoryHelpers.getAllCategories()
   let total = await userHelpers.getTotalAmount(req.session.user._id);
   res.render("user/checkout", {
     loginErr: req.session.userLoginErr,
     layout: "userLayout",
     user: req.session.user,
     total,
+    categories,
+    cartCount,
   });
 });
 
@@ -307,20 +308,32 @@ router.get("/order-success", verifyLogin, (req, res) => {
 });
 
 router.get("/orders", verifyLogin, async (req, res) => {
+  const categories = await categoryHelpers.getAllCategories()
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
   let orders = await userHelpers.getUserOrders(req.session.user._id);
   console.log("orders---------->", orders);
   res.render("user/orders", {
     user: req.session.user,
     layout: "userLayout",
     orders,
+    categories,
+    cartCount,
   });
 });
 
 router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
+  const categories = await categoryHelpers.getAllCategories()
   let orderDetails = await orderHelpers.getOrderDetailsWithProduct(
     req.params.id
   );
   console.log("result orderDetails", orderDetails);
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
   let userDetails = req.session.user;
   res.render("user/view-order-products", {
     user: req.session.user,
@@ -328,6 +341,8 @@ router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
     userDetails,
     orderDetails,
     userSuccessMsg: req.session.orderPlacedSuccessMsg,
+    categories,
+    cartCount,
   });
   req.session.orderPlacedSuccessMsg = false;
 });

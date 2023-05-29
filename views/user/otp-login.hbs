@@ -8,15 +8,15 @@
                     </a>
                     <h5>OTP-LogIn</h5>
                 </div>
-                <form action="/otp-login" method="post" id="login_form">
+                <form action="/otp-login" method="post" id="otpLogin_form">
                     {{# if userErrMsg}}
                     <div class="alert alert-danger">{{userErrMsg}}</div>
                     {{/if}}
                     {{!-- correction --}}
                     <div class="form-floating mb-4">
                         <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Enter Phone Number Here" />
-                        <label for="floatingPassword">Phone Number</label>
-                        <div class="error" id="error_msg_password"> </div>
+                        <label for="phoneNumber">Phone Number</label>
+                        <div class="error" id="error_msg_phoneNumber"> </div>
                     </div>
                     <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Next</button>
                     <p class="text-center mb-0">Back to normal
@@ -30,3 +30,4 @@
         </div>
     </div>
 </div>
+<script src="/js/otp-login.js"></script>

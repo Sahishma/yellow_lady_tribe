@@ -11,7 +11,7 @@
                     </a>
                      <h5>OTP-LogIn</h5>
                 </div>
-                <form action="/otp-validate" method="post" id="login_form">
+                <form action="/otp-validate" method="post" id="otpValidate_form">
                     {{!-- correction --}}
                     {{# if userErrMsg}}
                     <div class="alert alert-danger">{{userErrMsg}}</div>
@@ -24,7 +24,7 @@
                     <div class="form-floating mb-4">
                         <input type="number" class="form-control" id="otp" name="otp" placeholder="Enter OTP Here" />
                         <label for="otp">OTP</label>
-                        <div class="error" id="error_msg_password"> </div>
+                        <div class="error" id="error_msg_otp"> </div>
                     </div>
                     <button type="submit" class="btn btn-primary py-3 w-100 mb-4" href="/otp-validate">Submit</button>
                     <p class="text-center mb-0">
@@ -37,3 +37,4 @@
     </div>
 </div>
 <!-- Sign In End -->
+<script src="/js/otp-validate.js"></script>
