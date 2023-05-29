@@ -159,24 +159,14 @@ router.post("/otp-login", async (req, res) => {
     req.session.userErrMsg = "User not found with the entered mobile number";
     return res.redirect("/otp-login");
   }
-  console.log('USER DETAILS', user._id);
+  // console.log('USER DETAILS', user._id);
   let generateOtp = await userHelpers.generateUserLoginOtp(user._id, phoneNumber);
-  console.log("generateOtp",generateOtp);
+  // console.log("generateOtp",generateOtp);
   if(generateOtp.acknowledged){
     req.session.userIdForOtpLogin = user._id;
     req.session.userSuccessMsg = "OTP sent to your mobile number";
     res.redirect('/otp-validate')
   }
-
-
-
-  //1.phone number from  form
-  //2. random 6 digit number creatde by you
-
-  // var otp = '123456';
-  // create collection with fields phone no, otp an d store to it
-
-  // res.redirect("/otp-validate");
 });
 
 router.get("/otp-validate", (req, res) => {

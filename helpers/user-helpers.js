@@ -124,23 +124,19 @@ module.exports = {
     const otp = Math.floor(1000 + Math.random() * 9000);
 
     //BOF SENT SMS
-    const sentTo = '+91'+phoneNumber;
-    const sentMessage = otp + ' is your otp for login to yellOw.';
-    console.log('sentTo',sentTo);
-
-    const accountSid = "ACdaa333b52d37048f1ff22285675918f5";
-    const authToken = "e56d1fbec755e2a65f3afcc23bcfbecf";
+    const sentTo = "+91" + phoneNumber;
+    const sentMessage = otp + " is your otp for login to yellOw.";
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
     const client = require("twilio")(accountSid, authToken);
     client.messages
       .create({
         body: sentMessage,
-        from: "+13158738602",
+        from: process.env.TWILIO_FROM_NUMBER,
         to: sentTo,
-      });
-      // .then((message) => console.log(message.sid));
-      //EOF SENT SMS
-
-
+      })
+      .then((message) => console.log("twillo reponse", message.sid));
+    //EOF SENT SMS
     return new Promise((resolve, reject) => {
       db()
         .collection(collections.OTP_COLLECTION)
@@ -212,23 +208,23 @@ module.exports = {
       });
 
       if (!checkOtp) {
-        return { status: false, status_code :1, message: "OTP not found" };
+        return { status: false, status_code: 1, message: "OTP not found" };
       }
 
       if (checkOtp.otp != otp) {
-        return { status: false, status_code :2, message: "Invalid OTP" };
+        return { status: false, status_code: 2, message: "Invalid OTP" };
       }
 
       const user = await userCollection.findOne({ _id: new ObjectId(userId) });
 
       if (!user) {
-        return { status: false, status_code :3, message: "User not found" };
+        return { status: false, status_code: 3, message: "User not found" };
       }
 
-      return { status: true, status_code :4, message: "OTP validated", user };
+      return { status: true, status_code: 4, message: "OTP validated", user };
     } catch (error) {
       console.log(error);
-      return { status: false, status_code :5, message: "An error occurred" };
+      return { status: false, status_code: 5, message: "An error occurred" };
     }
   },
 
