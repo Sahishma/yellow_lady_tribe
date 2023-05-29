@@ -3,14 +3,17 @@
 
 <section>
     <!-- Cart Start -->
-    <div class="container-fluid pt-1">
+    <div class="container-fluid">
 
          {{# if userSuccessMsg}}
                             <div class="alert alert-success">{{userSuccessMsg}}</div>
         {{/if}}
         <div class="row px-xl-5">
             <div class="col-lg-8 table-responsive mb-5">
-                <h3>Order : {{orderDetails.orderId}}</h3>
+                <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Order : {{orderDetails.orderId}}</h4>
+                        </div>
+                        <hr>
                     <table class="table table-bordered mb-0">
                         <thead class="bg-secondary text-dark">
                             <tr>
@@ -44,8 +47,11 @@
                     </div> --}}
                     <div class="card-body">
 
-                        <h3>Shipping Address</h3>
-                        <div class="d-flex flex-column align-items-left justify-content-center" style="min-height: 150px">
+                        <div class="card-header bg-secondary border-0">
+                            <h4 class="font-weight-semi-bold m-0">Shipping Address</h4>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-left justify-content-center pt-4" style="min-height: 150px">
                             <div class="d-inline-flex">
                                 <ul style="list-style: none; padding: 0; margin: 0;">
                                     <li style="margin-bottom: 10px; text-align: left;"><strong>Name:</strong> <span>{{orderDetails.deliveryDetails.firstName}} {{orderDetails.deliveryDetails.lastName}}</span></li>
@@ -71,8 +77,6 @@
                                 </ul>
                             </div>
                         </div>
-
-                        <hr>
 
                     </div>
                     <div class="card-footer border-secondary bg-transparent">

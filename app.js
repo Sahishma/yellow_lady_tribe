@@ -29,6 +29,22 @@ handlebars.registerHelper('isEqual', function (value1, value2, options) {
   }
 });
 
+handlebars.registerHelper('isNotEqual', function (value1, value2, options) {
+  if (value1 != value2) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
+handlebars.registerHelper('range', function(start, end, options) {
+  let result = '';
+  for (let i = start; i <= end; i++) {
+    result += options.fn(i);
+  }
+  return new handlebars.SafeString(result);
+});
+
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

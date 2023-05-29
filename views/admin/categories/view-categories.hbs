@@ -1,9 +1,9 @@
 {{!-- BOF breadcrumb --}}
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb mt-4">
-    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Categories</li>
-  </ol>
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Categories</li>
+    </ol>
 </nav>
 <hr>
 
@@ -15,11 +15,11 @@
         <div class="col-12">
             <div class="bg-light rounded h-100 p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Categories</h6>
-                                <a href="/admin/categories/add">
-                                    <button type="button" class="btn btn-primary m-2" >Add New</button>
-                                </a>
-                            </div>
+                    <h6 class="mb-0">Categories</h6>
+                    <a href="/admin/categories/add">
+                        <button type="button" class="btn btn-primary m-2">Add New</button>
+                    </a>
+                </div>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -36,10 +36,14 @@
                             <tr>
                                 <th scope="row">{{@index}}</th>
                                 <td>{{this.category_name}}</td>
-                                  <td><img style="width: 50px;height:50px" src="/img/category/{{this._id}}.jpg" alt=""></td>
+                                <td><img style="width: 50px;height:50px" src="/img/category/{{this._id}}.jpg" alt=""></td>
                                 <td>
                                     <a href="/admin/categories/edit-categories/{{this._id}}" class="btn btn-primary m-2">Edit</button></a>
-                                    <a href="/admin/categories/delete-categories/{{this._id}}" class="btn btn-danger m-2" onclick="console.log('{{this.category_name}}'); return confirm('You\'re deleting {{category_name}} permanently,are you sure?')">Delete</a>
+                                    {{#isNotEqual this._id '645a6beaa7c8141f1034a725'}}
+                                    <a href="/admin/categories/delete-categories/{{this._id}}" class="btn btn-danger m-2"
+                                        onclick="console.log('{{this.category_name}}'); return confirm('You\'re deleting {{category_name}} permanently,are you sure?')">Delete</a>
+
+                                    {{/isNotEqual}}
                                 </td>
                             </tr>
 

@@ -22,9 +22,10 @@ const verifyLogin = (req, res, next) => {
 /* GET home page. */
 
 router.get("/", async (req, res) => {
+  // const products = await productHelpers.getAllProducts();
+  const products = await productHelpers.getProductsByCategoryWithPagination('645a6beaa7c8141f1034a725', 0, 8);
 
-  const products = await productHelpers.getAllProducts();
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
 
   let user = req.session.user;
   console.log("user session details", user);
@@ -41,27 +42,48 @@ router.get("/", async (req, res) => {
   });
 });
 
+
+
+const ITEMS_PER_PAGE = 8;
 router.get("/products/:category_id", async (req, res) => {
   const category_id = req.params.category_id;
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
   const reqUrl = req.url;
   let cartCount = null;
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let user = req.session.user;
-  productHelpers.getProductsByCategory(category_id).then((products) => {
-    res.render("user/list-products-by-category", {
-      products,
-      categories,
-      reqUrl,
-      user,
-      layout: "userLayout",
-      cartCount,
-    });
-    req.session.adminSuccessMsg = false;
+
+  // Get the page number from the query parameters
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+
+  // Get the total count of products in the category
+  const totalCount = await productHelpers.getProductsCountByCategory(category_id);
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Fetch the products for the current page
+  const products = await productHelpers.getProductsByCategoryWithPagination(category_id, skip, ITEMS_PER_PAGE);
+
+  res.render("user/list-products-by-category", {
+    products,
+    categories,
+    reqUrl,
+    user,
+    layout: "userLayout",
+    cartCount,
+    category_id,
+    pagination: {
+      page,
+      totalPages,
+    },
   });
+  req.session.adminSuccessMsg = false;
 });
+
 
 /* Register */
 
@@ -148,7 +170,6 @@ router.get("/otp-login", (req, res) => {
     noNeedNav: true,
   });
   req.session.userErrMsg = false;
-
 });
 
 router.post("/otp-login", async (req, res) => {
@@ -160,12 +181,15 @@ router.post("/otp-login", async (req, res) => {
     return res.redirect("/otp-login");
   }
   // console.log('USER DETAILS', user._id);
-  let generateOtp = await userHelpers.generateUserLoginOtp(user._id, phoneNumber);
+  let generateOtp = await userHelpers.generateUserLoginOtp(
+    user._id,
+    phoneNumber
+  );
   // console.log("generateOtp",generateOtp);
-  if(generateOtp.acknowledged){
+  if (generateOtp.acknowledged) {
     req.session.userIdForOtpLogin = user._id;
     req.session.userSuccessMsg = "OTP sent to your mobile number";
-    res.redirect('/otp-validate')
+    res.redirect("/otp-validate");
   }
 });
 
@@ -174,20 +198,19 @@ router.get("/otp-validate", (req, res) => {
   if (!req.session.userIdForOtpLogin) {
     res.redirect("/otp-login");
   }
-  res.render("user/otp-validate", { 
+  res.render("user/otp-validate", {
     userIdForOtpLogin: req.session.userIdForOtpLogin,
-    layout: "userLayout", 
-    noNeedNav: true 
+    layout: "userLayout",
+    noNeedNav: true,
   });
   delete req.session.userIdForOtpLogin;
-
 });
 
-router.post("/otp-validate", async(req, res) => {
+router.post("/otp-validate", async (req, res) => {
   console.log("otp validate post", req.body);
-  const userId = req.body.user_id
+  const userId = req.body.user_id;
   const otp = req.body.otp;
-  const otpValidate = await userHelpers.otpValidate(userId,otp);
+  const otpValidate = await userHelpers.otpValidate(userId, otp);
 
   if (otpValidate.status) {
     req.session.user = otpValidate.user;
@@ -203,7 +226,7 @@ router.post("/otp-validate", async(req, res) => {
 //---------------------CART--------------------------//
 
 router.get("/cart", verifyLogin, async (req, res) => {
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
   let cartCount = null;
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
@@ -253,9 +276,6 @@ router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
 
 // remove from cart
 
-
-
-
 //-------------------Checkout----------------//
 
 router.get("/checkout", verifyLogin, async (req, res) => {
@@ -265,7 +285,7 @@ router.get("/checkout", verifyLogin, async (req, res) => {
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
   let total = await userHelpers.getTotalAmount(req.session.user._id);
   res.render("user/checkout", {
     loginErr: req.session.userLoginErr,
@@ -298,7 +318,7 @@ router.get("/order-success", verifyLogin, (req, res) => {
 });
 
 router.get("/orders", verifyLogin, async (req, res) => {
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
   let cartCount = null;
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
@@ -315,7 +335,7 @@ router.get("/orders", verifyLogin, async (req, res) => {
 });
 
 router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
-  const categories = await categoryHelpers.getAllCategories()
+  const categories = await categoryHelpers.getAllCategories();
   let orderDetails = await orderHelpers.getOrderDetailsWithProduct(
     req.params.id
   );
