@@ -1,0 +1,82 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item"><a href="/admin/coupons">Coupons</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Coupons</li>
+    </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Edit Coupon</h6>
+                <form action="/admin/coupons/edit/{{coupon._id}}" method="post" id="editCoupon_form" enctype="multipart/form-data">
+
+
+                    <div class="row mb-3">
+                        <label for="coupon_code" class="col-sm-2 col-form-label">Title</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="title" name="title" required value="{{coupon.title}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="slug" class="col-sm-2 col-form-label">slug</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="slug" name="slug" required value="{{coupon.slug}}" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="coupon_code" class="col-sm-2 col-form-label">Coupon Code</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="coupon_code" name="coupon_code" required value="{{coupon.coupon_code}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="type" class="col-sm-2 col-form-label">Type</label>
+                        <div class="col-sm-10">
+                            <select class="form-select mb-3" id="type" name="type" required aria-label="Default select example">
+                                {{!-- <option value="percentage" {{#isEqual "percentage" coupon.type}}selected{{/isEqual}}>Percentage</option> --}}
+                                <option value="flat" {{#isEqual "flat" coupon.type}}selected{{/isEqual}}>Flat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="value" class="col-sm-2 col-form-label">Value</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="value" name="value" required value="{{coupon.value}}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary m-2">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
+<script>
+    function validateSlug() {
+        var slugInput = document.getElementById('slug');
+        var slug = slugInput.value.trim();
+
+        // Regular expression to validate the slug (allowing lowercase letters, numbers, hyphens, and underscores)
+        var slugPattern = /^[a-z0-9-_]+$/;
+
+        if (!slugPattern.test(slug)) {
+            // Display an error message
+            slugInput.setCustomValidity('Invalid slug. Only lowercase letters, numbers, hyphens, underscores are allowed.');
+        } else {
+            // Clear the error message
+            slugInput.setCustomValidity('');
+        }
+    }
+</script>

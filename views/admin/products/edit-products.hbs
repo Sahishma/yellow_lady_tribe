@@ -1,20 +1,14 @@
 {{!-- BOF breadcrumb --}}
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb mt-4">
-    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
-    <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
-  </ol>
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item"><a href="/admin/products">Products</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
+    </ol>
 </nav>
 <hr>
 
 {{!-- BOF breadcrumb --}}
-
-
-
-
-
-
 
 <!-- Form Start -->
 <div class="container-fluid pt-4 px-4">
@@ -44,7 +38,14 @@
                         </div>
                     </div>
 
-                     <div class="row mb-3">
+                    <div class="row mb-3">
+                        <label for="slug" class="col-sm-2 col-form-label">slug</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="slug" name="slug" required value="{{products.slug}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
                         <label for="mrp" class="col-sm-2 col-form-label">MRP</label>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" id="mrp" name="mrp" required value="{{products.mrp}}">
@@ -74,7 +75,7 @@
                         </div>
                     </div> --}}
 
-                    <div class="row mb-3">
+                    {{!-- <div class="row mb-3">
                         <label for="status" class="col-sm-2 col-form-label">Status</label>
                         <div class="col-sm-10">
                             <select class="form-select mb-3" id="status" name="status" required aria-label="Default select example">
@@ -82,13 +83,13 @@
                                 <option value="Out Of Stock" {{#isEqual 'Out Of Stock' products.status}}selected{{/isEqual}}>Out Of Stock</option>
                             </select>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="row mb-3">
                         <label for="description" class="col-sm-2 col-form-label">Description</label>
                         <div class="col-sm-10">
-                            {{!-- <input type="text" class="form-control" id="description" name="discription" required/> --}}
-                            <textarea class="form-control" name="description" id="description"  rows="5" >{{products.description}}</textarea>
+                            {{!-- <input type="text" class="form-control" id="description" name="discription" required /> --}}
+                            <textarea class="form-control" name="description" required id="description" rows="5">{{products.description}}</textarea>
                         </div>
                     </div>
 
@@ -97,7 +98,7 @@
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <img src="/img/{{products._id}}.jpg" alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
                         <div class="col-sm-10">
-                            <input type="file" class="form-control" id="image" name="image" onchange="viewImage(event)"  >
+                            <input type="file" class="form-control" id="image" name="image" onchange="viewImage(event)">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary m-2">Update</button>
@@ -109,7 +110,24 @@
 <!-- Form End -->
 
 <script>
-   function viewImage(event){
-    document.getElementById('imgView').src=URL.createObjectURL(event.target.files[0])
-   } 
+    function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+    }
+
+
+    function validateSlug() {
+        var slugInput = document.getElementById('slug');
+        var slug = slugInput.value.trim();
+
+        // Regular expression to validate the slug (allowing lowercase letters, numbers, hyphens, and underscores)
+        var slugPattern = /^[a-z0-9-_]+$/;
+
+        if (!slugPattern.test(slug)) {
+            // Display an error message
+            slugInput.setCustomValidity('Invalid slug. Only lowercase letters, numbers, hyphens, underscores are allowed.');
+        } else {
+            // Clear the error message
+            slugInput.setCustomValidity('');
+        }
+    }
 </script>

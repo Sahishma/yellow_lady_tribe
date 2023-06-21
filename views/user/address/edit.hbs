@@ -1,0 +1,91 @@
+
+
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+        <li class="breadcrumb-item"><a href="/saved-addresses">Saved Addresses</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Address</li>
+    </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Saved Addresses</h6>
+                <form action="/address/edit/{{addressDetail._id}}" method="post">
+
+                    <div class="row mb-3 form-group">
+                        <label for="User Name" class="col-sm-2 col-form-label">User Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="user_name" id="user_name" value = "{{addressDetail.address.[0]}}"required>
+                        </div>
+                    </div>
+                    <div class="row mb-3 form-group">
+                        <label for="Phone Number" class="col-sm-2 col-form-label">Phone Number</label>
+                        <div class="col-sm-10">
+                            <input type="tel" class="form-control" name="phone" id="phone" value="{{addressDetail.phone}}" required>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="col-md-6 form-group">
+                        <label>Address </label>
+                        <input class="form-control" type="text" placeholder="123 Street" name="address" id="address" value="{{addressDetail.address.[1]}}" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>City</label>
+                        <input class="form-control" type="text" placeholder="New York" name="city" id="city" value="{{addressDetail.address.[2]}}" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>State</label>
+                        <input class="form-control" type="text" placeholder="New York" name="state" id="state" value="{{addressDetail.address.[3]}}"required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>PIN Code</label>
+                        <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode" value="{{addressDetail.address.[4]}}"required>
+                        <input class="form-control" type="text" placeholder="user" name="userId" id="" value="{{user._id}}" hidden>
+                    </div>
+                    <fieldset class="row mb-3">
+                        <legend class="col-form-label col-sm-2 pt-0">Address Type</legend>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="address_type" id="Home" value="Home">
+                                <label class="form-check-label" for="gridRadios1">
+                                    Home
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="address_type" id="work_place" value="Work Place">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Work Place
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="address_type" id="others" value="Others">
+                                <label class="form-check-label" for="gridRadios2">
+                                    Others
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div class="row mb-3">
+
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                                <label class="form-check-label" for="gridCheck1">
+                                    Make this as my default address
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,9 +19,12 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 <h6 class="mb-4">Add Category</h6>
-                <form action="/admin/categories/add" method="post" id="addCategory_form" enctype="multipart/form-data">
-                    <div class="row mb-3">
-                        <label for="category_name" class="col-sm-2 col-form-label">Name</label>
+                <form action="/admin/categories/add" method="POST"  enctype="multipart/form-data">
+                <input type="text" id="test" name="test">
+                 <input type="file" class="form-control" id="image" name="image"  >
+                      
+                    {{!-- <div class="row mb-3">
+                        <label for="category_name" class="co    l-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="category_name" name="category_name" required />
                         </div>
@@ -29,16 +32,15 @@
                     <div class="row mb-3">
                         <label for="description" class="col-sm-2 col-form-label">Description</label>
                         <div class="col-sm-10">
-                            {{!-- <input type="text" class="form-control" id="discription" name="discription" required /> --}}
                             <textarea class="form-control" name="description" id="description" rows="5"></textarea>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <div class="col-sm-10">
-                            <input type="file" class="form-control" id="image" name="image" / required>
+                            <input type="file" class="form-control" id="image" name="image"  required>
                         </div>
-                    </div>
+                    </div> --}}
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>

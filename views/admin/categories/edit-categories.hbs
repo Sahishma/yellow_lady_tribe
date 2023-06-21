@@ -1,4 +1,3 @@
-
 {{!-- BOF breadcrumb --}}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mt-4">
@@ -11,19 +10,44 @@
 
 {{!-- BOF breadcrumb --}}
 
-
 <!-- Form Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 <h6 class="mb-4">Edit Category</h6>
-                <form action="/admin/categories/edit-categories/{{category._id}}" method="post" id="addCategory_form">
-                    <div class="mb-3">
-                        <label for="category_name" class="form-label">Catrgory name</label>
+                <form action="/admin/categories/edit-categories/{{category._id}}" method="post" id="addCategory_form" enctype="multipart/form-data">
+                    {{!-- <div class="row mb-3">
+                        <label for="category_name" class="col-sm-2 col-form-label">Catrgory name</label>
                         <input type="text" class="form-control" value="{{category.category_name}}" id="category_name" name="category_name"
                             aria-describedby="emailHelp">
+                    </div> --}}
+
+                    <div class="row mb-3">
+                        <label for="category_name" class="col-sm-2 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" value="{{category.category_name}}" id="category_name" name="category_name" required
+                            aria-describedby="emailHelp">  
+                        </div>
                     </div>
+
+                    <div class="row mb-3">
+                        <label for="description" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            {{!-- <input type="text" class="form-control" id="description" name="discription" required/> --}}
+                            <textarea class="form-control" name="description" id="description" required rows="5" >{{category.description}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="image" class="col-sm-2 col-form-label">Image</label>
+                        <img src={{category.image_url}} alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
+                        <input type="text" id="image_url" name="image_url" value="{{category.image_url}}">
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" id="imageUploded" name="imageUploded"  onchange="viewImage(event)"  >
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -31,3 +55,12 @@
     </div>
 </div>
 <!-- Form End -->
+
+<script>
+    function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+    }
+
+
+
+</script>

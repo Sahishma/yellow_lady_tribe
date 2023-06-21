@@ -1,0 +1,77 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
+    </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Edit Profile</h6>
+                <form action="/edit-profile" method="post" id="editProfile_form" >
+
+
+
+                    <div class="row mb-3">
+                        <label for="User name" class="col-sm-2 col-form-label">User Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="user_name" name="user_name" required value="{{user.username}}">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="Phone number" class="col-sm-2 col-form-label">Phone No.</label>
+                        <div class="col-sm-10">
+                            <input type="tel" class="form-control" name="phone" id="phone" value="{{user.phone}}" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="Email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="email" id="email" value="{{user.email}}" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="'address"  class="col-sm-2 col-form-label">Address </label>
+                        <div class="col-sm-10">
+                        <input class="form-control" type="text" placeholder="123 Street" name="address" id="address" value="{{address.[1]}}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        <label>City</label>
+                        <input class="form-control" type="text" placeholder="New York" name="city" id="city" value="{{address.[2]}}" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>State</label>
+                        <input class="form-control" type="text" placeholder="New York" name="state" id="state" value="{{address.[3]}}" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>PIN Code</label>
+                        <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode" value="{{address.[4]}}" required>
+                        <input class="form-control" type="text" placeholder="user" name="userId" id="" value="{{user._id}}" hidden>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary m-2">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Form End -->
+
+{{!-- <script>
+  //  function viewImage(event) {
+    //    document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+    } --}}

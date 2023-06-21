@@ -1,10 +1,12 @@
-<div class="container-fluid pt-4 px-4">
+<div class="container-fluid px-4">
+                    <h2>Orders</h2>
+                    <hr>
+
     <div class="row g-4">
         <div class="col-12">
             <div class="bg-light rounded h-100 p-4">
-
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="ordersTable">
                         <thead>
                             <tr>
                                 <th scope="col">Order ID</th>
@@ -35,3 +37,10 @@
         </div>
     </div>
 </div>
+<script>
+    console.log("calling datztable");
+$(document).ready(function () {
+  console.log("entered in to function");
+    $("#ordersTable").DataTable();
+  });
+</script>

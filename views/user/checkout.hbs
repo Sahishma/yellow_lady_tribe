@@ -9,126 +9,76 @@
                         <div class="card-header bg-secondary border-0">
                             <h4 class="font-weight-semi-bold m-0">Shipping Address</h4>
                         </div>
-                        
+
                         <div class="row mt-4">
                             <div class="col-md-6 form-group">
                                 <label>First Name</label>
-                                <input class="form-control" type="text" placeholder="John" name="firstName" id="firstName">
+                                <input class="form-control" type="text" placeholder="John" name="firstName" id="firstName" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Last Name</label>
-                                <input class="form-control" type="text" placeholder="Doe" name="lastName" id="lastName">
+                                <input class="form-control" type="text" placeholder="Doe" name="lastName" id="lastName" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>E-mail</label>
-                                <input class="form-control" type="text" placeholder="example@email.com" name="email" id="email">
+                                <input class="form-control" type="text" placeholder="example@email.com" name="email" id="email" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Mobile No</label>
-                                <input class="form-control" type="number" placeholder="+123 456 789" name="mobileNumber" id="mobileNumber">
+                                <input class="form-control" type="number" placeholder="+123 456 789" name="mobileNumber" id="mobileNumber" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Address </label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address" id="address">
+                                <input class="form-control" type="text" placeholder="123 Street" name="address" id="address" required>
                             </div>
-                            {{!-- <div class="col-md-6 form-group">
-                                <label>Address Line 2</label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address2" id="address2">
-                            </div> --}}
+                     
                             <div class="col-md-6 form-group">
                                 <label>Country</label>
                                 <select class="custom-select">
                                     <option selected>United States</option>
-                                    <option>Afghanistan</option>
+                                    <option>India</option>
                                     <option>Albania</option>
                                     <option>Algeria</option>
                                 </select>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>City</label>
-                                <input class="form-control" type="text" placeholder="New York" name="city" id="city">
+                                <input class="form-control" type="text" placeholder="New York" name="city" id="city" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>State</label>
-                                <input class="form-control" type="text" placeholder="New York" name="state" id="state">
+                                <input class="form-control" type="text" placeholder="New York" name="state" id="state" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>PIN Code</label>
-                                <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode">
+                                <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode" required>
                                 <input class="form-control" type="text" placeholder="user" name="userId" id="" value="{{user._id}}" hidden>
                             </div>
 
+                        </div>
 
-                            {{!-- <div class="col-md-12 form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="newaccount">
-                                    <label class="custom-control-label" for="newaccount">Create an account</label>
-                                </div>
-                            </div> --}}
-                            {{!-- <div class="col-md-12 form-group">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="shipto">
-                                    <label class="custom-control-label" for="shipto" data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
-                                </div>
-                            </div> --}}
-                        </div>
+
                     </div>
-                    {{!-- <div class="collapse mb-4" id="shipping-address">
-                        <h4 class="font-weight-semi-bold mb-4">Shipping Address</h4>
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>First Name</label>
-                                <input class="form-control" type="text" placeholder="John" name="FirstName">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Last Name</label>
-                                <input class="form-control" type="text" placeholder="Doe" name="LastName">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>E-mail</label>
-                                <input class="form-control" type="text" placeholder="example@email.com" name="email">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Mobile No</label>
-                                <input class="form-control" type="number" placeholder="+123 456 789" name="mobileNumber">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Address</label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Address Line 2</label>
-                                <input class="form-control" type="text" placeholder="123 Street" name="address2">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Country</label>
-                                <select class="custom-select">
-                                    <option selected>United States</option>
-                                    <option>Afghanistan</option>
-                                    <option>Albania</option>
-                                    <option>Algeria</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>City</label>
-                                <input class="form-control" type="text" placeholder="New York" name="city">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>State</label>
-                                <input class="form-control" type="text" placeholder="New York" name="state">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>PIN Code</label>
-                                <input class="form-control" type="number" placeholder="123" name="pinCode">
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
+
                 <div class="col-lg-4">
-                    <div class="card border-secondary mb-5">
+                    <span class="mb-5">
+                        <div class="input-group">
+                            <input id="couponCodeInput" type="text" class="form-control p-4" placeholder="Coupon Code">
+                            <div class="input-group-append">
+                                <button onclick="applyCoupon()" class="btn btn-primary">Apply Coupon</button>
+                            </div>
+
+                        </div>
+                        <div class="error" id="coupen_msg_div"></div>
+                    </span>
+
+                    <div class="card border-secondary mb-5 mt-5">
+
                         <div class="card-header bg-secondary border-0">
                             <h4 class="font-weight-semi-bold m-0">Order Total</h4>
                         </div>
+
                         {{!-- <div class="card-body">
                             <h5 class="font-weight-medium mb-3">Products</h5>
                             <div class="d-flex justify-content-between">
@@ -153,10 +103,22 @@
                                 <h6 class="font-weight-medium">$10</h6>
                             </div>
                         </div> --}}
+
                         <div class="card-footer border-secondary bg-transparent">
+                            <div class="d-flex justify-content-between mt-2" id="total">
+                                <h5 class="font-weight-medium">Total</h5>
+                                <h5 class="font-weight-medium">Rs.{{total}}</h5>
+                            </div>
                             <div class="d-flex justify-content-between mt-2">
-                                <h5 class="font-weight-bold">Total</h5>
-                                <h5 class="font-weight-bold">Rs.{{total}}</h5>
+                                <input id="coupon_discount_input" name="coupon_discount_input" type="hidden" value="0">
+                                <h5 class="font-weight-light">Coupon Discount</h5>
+                                <h5 class="font-weight-light"> Rs. <span id="coupon_discount">0</span></h5>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mt-2">
+                                <input id="amount_payable_input" name="amount_payable_input" type="hidden" value="{{total}}">
+                                <h5 class="font-weight-bold">Amount Payable</h5>
+                                <h5 class="font-weight-bold">Rs.<span id="amount_payable"> {{total}} </span></h5>
                             </div>
                         </div>
                     </div>
@@ -167,22 +129,22 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" name="payment" value="COD" id="COD">
+                                    <input type="radio" class="custom-control-input" name="payment" value="COD" id="COD" required>
                                     <label class="custom-control-label" for="COD">COD</label>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            {{!-- <div class="form-group">
                                 <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" name="payment" value="online" id="online">
+                                    <input type="radio" class="custom-control-input" name="payment" value="online" id="online" required>
                                     <label class="custom-control-label" for="Online payment">Online Payment</label>
                                 </div>
-                            </div>
-                            {{!-- <div class="">
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                                    <label class="custom-control-label" for="banktransfer">Bank Transfer</label>
-                                </div>
                             </div> --}}
+                            <div class="">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" name="payment" value="razorpay" id="razorpay" required>
+                                    <label class="custom-control-label" for="razorpay">Razorpay</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-footer border-secondary bg-transparent">
                             <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
@@ -192,7 +154,9 @@
             </div>
         </div>
     </form>
+    
     <!-- Checkout End -->
+
 
     <script>
         console.log("ajax calling---------->")
@@ -203,13 +167,113 @@
                 method: 'post',
                 data: $('#checkout-form').serialize(),
                 success: (response) => {
-                    alert(response)
-                    if (response.status) {
+                    console.log(response)
+                    //alert(response)
+                    alert('Order placed sucessfully.');
+                    if (response.codSuccess) {
+                        console.log("this is if case")
+                        console.log("response", response);
                         console.log("status in ajax---------->", response.status);
                         //const orderId = response.orderId;
+                        console.log("id in response---------->", response.orderId);
                         location.href = '/view-order-products/' + response.orderId;
+                    } else {
+                        console.log("this is else case")
+                        razorpayPayment(response)
                     }
                 }
             })
         })
+        function razorpayPayment(order) {
+            var options = {
+                "key": "rzp_test_KKEibDc3VJc3iI", // Enter the Key ID generated from the Dashboard
+                //"amount": 1000,
+                "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "yellOw", //your business name
+                "description": "Test Transaction",
+                "image": "https://example.com/your_logo",
+                "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                "handler": function (response) {
+                    //   alert(response.razorpay_payment_id);
+                    //   alert(response.razorpay_order_id);
+                    //   alert(response.razorpay_signature);
+                    console.log("response razorpayPayment", response)
+
+                    if (response.razorpay_payment_id != '') {
+                        location.href = '/view-order-products/' + order.receipt;
+
+                    }
+
+
+                    //location.href = '/view-order-products/' + order.receipt;
+
+                    // verifyPayment(response, order) 
+
+                },
+                "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+                    "name": "Sahishma", //your customer's name
+                    "email": "Sahishma@example.com",
+                    "contact": "9605808097" //Provide the customer's phone number for better conversion rates 
+                },
+                "notes": {
+                    "address": "Razorpay Corporate Office"
+                },
+                "theme": {
+                    "color": "bg-secondary"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
+
+        function verifyPayment(payment, order) {
+            $.ajax({
+                url: '/verify-payment',
+                data: {
+                    payment,
+                    order,
+                },
+                method: 'post'
+            })
+        }
+
+
+        function applyCoupon() {
+            event.preventDefault();
+            let couponCode = document.getElementById("couponCodeInput").value;
+            $.ajax({
+                url: "/apply-coupon",
+                method: "post",
+                data: { couponCode: couponCode },
+                success: (response) => {
+                    console.log("response  ==>", response)
+                    let messageDiv = document.getElementById("coupen_msg_div");
+                    messageDiv.innerHTML = response.message;
+
+                    if (response.status) {
+                        messageDiv.style.color = "green"; // Set green color for success message
+                    } else {
+                        messageDiv.style.color = "red"; // Set red color for error message
+                    }
+                    //let discountByCoupon = document.getElementById("coupon_discount_input");
+                    // discountByCoupon.value  = response.couponDiscount;
+
+                    //let payableAmount = document.getElementById("amount_payable_input");
+                    //payableAmount.value = response.amountPayable;
+
+                    $("#coupon_discount_input").val(response.couponDiscount);
+                    $("#amount_payable_input").val(response.amountPayable);
+
+                    $("#coupon_discount").html(response.couponDiscount);
+                    $("#amount_payable").html(response.amountPayable);
+
+                },
+                error: () => {
+                    let messageDiv = document.getElementById("coupen_msg_div");
+                    messageDiv.innerHTML = "An error occurred. Please try again.";
+                    messageDiv.style.color = "red"; // Set red color for error message
+                }
+            });
+        }
     </script>

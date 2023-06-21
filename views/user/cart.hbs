@@ -1,6 +1,3 @@
-
-
-
 <!-- Cart Start -->
 <div class="container-fluid">
     <div class="row px-xl-5">
@@ -18,6 +15,7 @@
 
                 <tbody>
                     {{#each products}}
+
                     <tr>
 
                         <td class="align-middle"><img src="/img/{{this.product._id}}.jpg" alt="" style="width: 50px;"> {{this.product.product_name}}</td>
@@ -29,11 +27,13 @@
                             <span id="{{this.product._id}}">{{this.quantity}}</span>
                             <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../userId}}',1)">+</button>
                         </td>
-                        <td class="align-middle">Rs.</td>
+                        {{!-- <td class="align-middle">Rs.{{this.rowTotal}}</td> --}}
+                        <td class="align-middle" id="rowTotal-{{this.product._id}}">Rs.{{this.rowTotal}}</td>
                         <td class="align-middle">
-                            <a href="" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a>
+                            <a href="/cart/remove-cart-item/{{this.item}}" class="btn btn-sm btn-primary" onclick="return confirm('you\'re Removing{{this.product.product_name}} from cart')"><i class="fa fa-times"></i></a>
                         </td>
                     </tr>
+        
                     {{/each}}
 
 
@@ -41,27 +41,21 @@
             </table>
         </div>
         <div class="col-lg-4">
-            {{!-- <form class="mb-5" action="">
-                <div class="input-group">
-                    <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary">Apply Coupon</button>
-                    </div>
-                </div>
-            </form> --}}
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
                     <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
                 </div>
                 {{!-- <div class="card-body">
-                    <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Subtotal</h6>
-                        <h6 class="font-weight-medium">Rs.</h6>
-                    </div>
+                   
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Shipping</h6>
-                        <h6 class="font-weight-medium">$10</h6>
+                        <h6 class="font-weight-medium">Rs.10</h6>
                     </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Delivery Charge</h6>
+                        <h6 class="font-weight-medium">Rs.90</h6>
+                    </div>
+                  
                 </div> --}}
                 <div class="card-footer border-secondary bg-transparent">
                     <div class="d-flex justify-content-between mt-2">
@@ -76,33 +70,79 @@
 </div>
 
 <script>
+    // function changeQuantity(cartId, proId, userId, count) {
+    // console.log('========...====>',cartId, proId,userId,count)
+    //   let quantity = parseInt(document.getElementById(proId).innerHTML)
+    //  count = parseInt(count)
+    // $.ajax({
+    //    url: '/change-product-quantity',
+    //   data: {
+    //       user: userId,
+    //      cart: cartId,
+    //      product: proId,
+    //      count: count,
+    //      quantity: quantity
+    //  },
+    //  method: 'post',
+    //  success: (response) => {
+    //     if (response.removeProduct) {
+    //         alert("Product removed from cart")
+    //       location.reload()
+    //   } else {
+    //      console.log(response)
+    //      document.getElementById(proId).innerHTML = quantity + count
+    //     document.getElementById('total').innerHTML = response.total
+    //  }
+
+    //  }
+    // });
+
+    // }
+
     function changeQuantity(cartId, proId, userId, count) {
-        // console.log('========...====>',cartId, proId,userId,count)
-        let quantity = parseInt(document.getElementById(proId).innerHTML)
-        count = parseInt(count)
-        $.ajax({
-            url: '/change-product-quantity',
-            data: {
-                user: userId,
-                cart: cartId,
-                product: proId,
-                count: count,
-                quantity: quantity
-            },
-            method: 'post',
-            success: (response) => {
-                if (response.removeProduct) {
-                    alert("Product removed from cart")
-                    location.reload()
-                } else {
-                    console.log(response)
-                    document.getElementById(proId).innerHTML = quantity + count
-                    document.getElementById('total').innerHTML = response.total
+        console.log("checking---------------->", cartId, proId, userId, count)
+        let quantityElement = document.getElementById(proId);
+        let quantity = parseInt(quantityElement.innerHTML);
+        let rowTotalElement = document.getElementById(`rowTotal-${proId}`);
+        let rowTotal = parseFloat(rowTotalElement.innerHTML.substr(3)); // Extract the numerical value from the row total
+        count = parseInt(count);
+        quantity += count;
+        if (quantity >= 1) {
+            $.ajax({
+                url: '/change-product-quantity',
+                data: {
+                    user: userId, // Pass the first element of the userId array
+                    cart: cartId,
+                    product: proId,
+                    count: count,
+                    quantity: quantity
+                },
+                method: 'post',
+                success: (response) => {
+                    if (response.removeProduct) {
+                        alert("Product removed from cart");
+                        location.reload();
+                    } else {
+
+                        location.reload();
+                        console.log(response);
+                        quantityElement.innerHTML = quantity;
+                        //TODO : instead of page reload set the row total change as dinamic from ajax response,  response.product.price; NOT GETTING
+                        // Update the row total
+                        //rowTotal += count * response.product.price;
+                        //rowTotalElement.innerHTML = `Rs.${rowTotal.toFixed(2)}`;
+                        //document.getElementById('total').innerHTML = response.total;
+                    }
                 }
-
-            }
-        });
-
+            });
+        }
     }
+
+
+
+
+
+
+
 
 </script>

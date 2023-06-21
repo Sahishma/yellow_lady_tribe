@@ -19,9 +19,10 @@
             <div class="bg-light rounded h-100 p-4">
                 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="ordersTable">
                         <thead>
                         <tr>
+                                <th scope="col">#</th>
                                 <th scope="col">Order ID</th>
                                 <th scope="col">User Name</th>
                                 <th scope="col">Total Amount</th>
@@ -34,6 +35,7 @@
 
                             {{#each orders}}
                             <tr>
+                                <th scope="row">{{@index}}</th>
                                 <th scope="row">{{this.orderId}}</th>
                                 <td>{{this.username}}</td>
                                 <td>{{this.totalAmount}}</td>

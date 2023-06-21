@@ -1,0 +1,106 @@
+
+
+
+<!-- saved-addresses.hbs -->
+<style>
+  /* Styling for the address listing */
+  .container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .address-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px;
+  }
+
+  .address-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .address-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .address-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+
+  .address-card-actions button {
+    margin-left: 10px;
+  }
+
+  .address-type {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .address-details {
+    margin-top: 10px;
+  }
+
+  .address-details p {
+    margin: 0;
+  }
+
+  .add-new-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .add-new-button a {
+    text-decoration: none;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 16px;
+   
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+</style>
+
+<div class="container">
+  <div class="add-new-button">
+    <a href="/address/add">
+      <button type="button" class="btn btn-primary m-2">Add New</button>
+    </a>
+  </div>
+  <div class="address-list">
+    {{#each allAddress}}
+    <div class="address-card">
+      <div class="address-card-header">
+        <div class="address-type">{{this.address_type}}</div>
+        <div class="address-card-actions">
+            <a href="/address/edit/{{this._id}}" class="btn btn-secondary m-2">Edit</a>
+          <a href="/address/delete/{{this._id}}" class="btn btn-danger m-2" onclick="return confirm('You\'re deleting this Address permanently')">Delete</a>
+        </div>
+      </div>
+      <div class="address-details">
+        <p>{{this.address.[0]}}</p>
+        <p>{{this.address.[1]}}</p>
+        <p>{{this.address.[2]}}</p>
+        <p>{{this.address.[3]}}</p>
+        <p>{{this.address.[4]}}</p>
+      </div>
+      <div class="Phone-number"><p><strong>Phone number:</strong> {{this.phone}}</p></div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+

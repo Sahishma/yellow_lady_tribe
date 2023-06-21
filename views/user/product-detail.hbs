@@ -1,4 +1,3 @@
-
 <!-- Shop Detail Start -->
 <div class="container-fluid py-3">
     <div class="row px-xl-5">
@@ -29,19 +28,47 @@
 
         <div class="col-lg-7 pb-5">
             <h3 class="font-weight-semi-bold">{{product.product_name}}</h3>
-            {{!-- {{#if (product.stock > 0)}} --}}
+            {{#isLessThan product.stock 5 }}
             <p class="text-success p-0">{{product.stock}} More available</p>
-            {{!-- {{else}}
-            <p class="text-danger p-0">{{product.status}}</p>
-            {{/if}} --}}
+            {{/isLessThan}}
+
+            {{#isEqual product.stock 0}}
+            <p class="text-danger p-0">Out of stock!</p>
+            {{/isEqual}}
+
             <h3 class="font-weight-semi-bold mb-1">Rs.{{product.price}}</h3>
             <h3 class="text-muted"><del>Rs.{{product.mrp}}</del></h3>
             <p class="mb-4">{{product.description}}</p>
 
             <div class="d-flex align-items-center mb-4 pt-2">
+                <button onclick="" class="btn btn-primary px-3 mr-2"><i class="fas fa-heart mr-1"></i> Wishlist</button>
+                
+                {{#isGreaterThan product.stock 0}}
                 <button onclick="addToCart('{{product._id}}')" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                {{else}}
+                 <button class="btn btn-primary px-3 disabled"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+
+                {{/isGreaterThan}}
             </div>
+            <hr>
+
+            <p>
+            <h5 class="fa fa-check text-primary m-0 mr-3"></h5>Quality Product</p>
+            <p>
+            <h5 class="fa fa-shipping-fast text-primary m-0 mr-2"></h5>Free Shipping</p>
+            <p>
+            <h5 class="fas fa-exchange-alt text-primary m-0 mr-3"></h5>14-Day Return</p>
+            <p>
+            <h5 class="fa fa-phone-volume text-primary m-0 mr-3"></h5>24/7 Support</p>
+            <p> 100% Original Products</p>
+            <hr>
+            <p>
+            <h5 class="text-primary m-0 mr-3">Terms & Conditions</h5>
+            </p>
+            <p>Contrary to popular belief, Lorem Ipsum is not simply random text.</p>
+            <p>Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia</p>
         </div>
+
 
     </div>
 

@@ -1,15 +1,33 @@
+
 function addToCart(productId) {
-  //TODO : if user is not loged in then redirect to login
+  // Check if user is logged in
   $.ajax({
-    url: "/add-to-cart/" + productId,
+    url: "/check-login",
     method: "get",
     success: (response) => {
-      if (response.status) {
-        let count = $("#cart-count").html();
-        count = parseInt(count) + 1;
-        $("#cart-count").html(count);
-        alert("successfully added");
-      } 
+      if (response.loggedIn) {
+        // User is logged in, add to cart
+        $.ajax({
+          url: "/add-to-cart/" + productId,
+          method: "get",
+          success: (response) => {
+            if (response.status) {
+              let count = $("#cart-count").html();
+              count = parseInt(count) + 1;
+              $("#cart-count").html(count);
+              alert("Product added successfully");
+            }
+          },
+        });
+      } else {
+        // User is not logged in, redirect to login page
+        window.location.href = "/login";
+      }
     },
   });
 }
+
+
+
+
+

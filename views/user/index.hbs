@@ -183,27 +183,34 @@
         </div> --}}
 
         {{!-- BOF listing of products --}}
-     
+
         {{#each products}}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3 pb-1">
             <div class="card product-item border-0 mb-4">
                 <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                    <a href="/product-detail/{{this._id}}">
-                         <img class="img-fluid w-100"  style="height: 15rem;" src="img/{{this._id}}.jpg" alt="">
+                    <a href="/product-detail/{{this.slug}}">
+                        <img class="img-fluid w-100" style="height: 15rem;" src="img/{{this._id}}.jpg" alt="">
                     </a>
                 </div>
                 <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                    <h6 class="text-truncate mb-3">
-                        <a href="/product-detail/{{this._id}}">{{this.product_name}}</a>
+                    <h6 class="text-truncate ">
+                        <a href="/product-detail/{{this.slug}}">{{this.product_name}}</a>
                     </h6>
+                    
                     <div class="d-flex justify-content-center">
                         <h6>Rs.{{this.price}}</h6>
                         <h6 class="text-muted ml-2"><del>Rs.{{this.mrp}}</del></h6>
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-between bg-light border">
-                    <a href="" class="btn btn-sm text-dark p-0"><i class="fas fa-heart text-primary mr-1"></i>Wishlist</a>
-                    <button onclick="addToCart('{{this._id}}')" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                    <button href="" class="btn btn-sm text-dark p-0"><i class="fas fa-heart text-primary mr-1"></i>Wishlist</button>
+                    {{!-- <button onclick="addToCart('{{this._id}}')" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button> --}}
+                    {{#isGreaterThan this.stock 0}}
+                    <button onclick="addToCart('{{this._id}}')" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
+                    {{else}}
+                    <button class="btn btn-primary px-3 disabled"> Out of Stock</button>
+
+                    {{/isGreaterThan}}
                 </div>
             </div>
         </div>

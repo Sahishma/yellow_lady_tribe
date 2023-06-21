@@ -1,0 +1,76 @@
+{{!-- BOF breadcrumb --}}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb mt-4">
+        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Coupons</li>
+    </ol>
+</nav>
+<hr>
+
+{{!-- BOF breadcrumb --}}
+
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="bg-light rounded h-100 p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Coupons</h6>
+                    <a href="/admin/coupons/add">
+                        <button type="button" class="btn btn-primary m-2">Add New</button>
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table" id="couponsTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Coupon code</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Type</th>
+
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each getCoupons}}
+                            <tr>
+                                <th scope="row">{{@index}}</th>
+                                <td>{{this._id}}</td>
+                                <td>{{this.title}}</td>
+                                <td>{{this.coupon_code}}</td>
+                                <td>{{this.value}}</td>
+                                <td>{{this.type}}</td>
+                                <td>
+                                    <a href="/admin/coupons/edit/{{this._id}}" class="btn btn-primary m-2">Edit</a>
+                                    <a href="/admin/coupons/delete/{{this._id}}" class="btn btn-danger m-2" onclick="console.log('{{this.title}}'); return confirm('You\'re deleting {{title}} permanently')">Delete</a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateSlug() {
+        var slugInput = document.getElementById('slug');
+        var slug = slugInput.value.trim();
+
+        // Regular expression to validate the slug (allowing lowercase letters, numbers, hyphens, and underscores)
+        var slugPattern = /^[a-z0-9-_]+$/;
+
+        if (!slugPattern.test(slug)) {
+            // Display an error message
+            slugInput.setCustomValidity('Invalid slug. Only lowercase letters, numbers, hyphens, underscores are allowed.');
+        } else {
+            // Clear the error message
+            slugInput.setCustomValidity('');
+        }
+    }
+</script>

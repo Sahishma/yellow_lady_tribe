@@ -9,6 +9,7 @@ module.exports = {
       let orders = await db()
         .collection(collections.ORDER_COLLECTION)
         .find()
+        .sort({ date : -1 })
         .toArray();
       resolve(orders);
     });
@@ -149,7 +150,7 @@ module.exports = {
 
       // Convert the order ID from string to ObjectId
       const orderIdObj = new ObjectId(orderId);
-
+      console.log("new ObjectId(orderId);", orderIdObj);
       // Aggregation pipeline to fetch the order details with product title and price
       const pipeline = [
         // Match the order by ID
@@ -174,6 +175,8 @@ module.exports = {
             deliveryDetails: 1,
             payment: 1,
             totalAmount: 1,
+            couponDiscount:1,
+            amountPayable:1,
             status: 1,
             date: 1,
             products: {
@@ -222,6 +225,8 @@ module.exports = {
         deliveryDetails: result[0].deliveryDetails,
         payment: result[0].payment,
         totalAmount: result[0].totalAmount,
+        couponDiscount: result[0].couponDiscount,
+        amountPayable:result[0].amountPayable,
         status: result[0].status,
         date: result[0].date,
         products: result[0].products.map((product) => ({
@@ -371,15 +376,15 @@ module.exports = {
     }
   },
 
-  updateStatus: (orderId, body) => {
+  updateStatus: (orderId,status) => {
     console.log("entered to update status");
-    console.log("req.body.status", body.status);
+    console.log("req.body.status", status);
     return new Promise(async (resolve, reject) => {
       let updateStatus = await db()
         .collection(collections.ORDER_COLLECTION)
         .updateOne(
           { _id: new ObjectId(orderId) },
-          { $set: { status: body.status } }
+          { $set: { status: status } }
         )
 
         .then((response) => {
