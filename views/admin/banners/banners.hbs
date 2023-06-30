@@ -34,7 +34,7 @@
                         <tbody>
                             {{#each allBanners}}
                             <tr>
-                                <th scope="row">{{@index}}</th>
+                                <th scope="row">{{incrementIndex @index}}</th>
                                 <td>{{this._id}}</td>
                                 <td>{{this.image_url}}</td>
                                 <td>{{this.main_title}}</td>

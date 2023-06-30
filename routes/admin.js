@@ -14,6 +14,7 @@ const path = require("path");
 const multer = require("multer");
 const ObjectId = require("mongodb").ObjectId;
 const fs = require('fs');
+const PDFDocument = require('pdfkit');
 
 
 const verifyLogin = (req, res, next) => {
@@ -68,10 +69,21 @@ const img = multer({ storage: storage });
 
 /* GET admin listing. */
 
-router.get("/", verifyLogin, function (req, res, next) {
+router.get("/", async function (req, res, next) {
   res.set("Cache-Control", "no-cache, no-store, must-revalidate");
-  // res.render("admin/index");
-  res.render("admin/dashboard");
+  let orders = await orderHelpers.getDeliveredOrderListWithUserDetails();
+  console.log("orders", orders);
+  let todaysOrders = await orderHelpers.getTodaysOrdersCount();
+  console.log("todaysOrders", todaysOrders);
+  let todaysTotalSale = await orderHelpers.getTodaysTotalSales();
+  console.log("todaysTotalSale ", todaysOrders);
+  let totalOrders = await orderHelpers.getTotalOrders();
+  let totalSales = await orderHelpers.getTotalSales();
+
+  let orderLineChartData = await orderHelpers.getOrderLineChartData();
+  let orderBarChartData = await orderHelpers.getorderBarChartData();
+  console.log("orderBarChartData", orderBarChartData);
+  res.render("admin/dashboard", { orders, todaysOrders, todaysTotalSale, totalOrders, totalSales, orderLineChartData, orderBarChartData });
 });
 
 /* Login */
@@ -107,9 +119,61 @@ router.get("/logout", verifyLogin, (req, res) => {
   res.redirect("/admin/login");
 });
 
+
+//==========Sales report=======
+
+
+router.route("/sales-report")
+  .get(verifyLogin, async (req, res) => {
+    // Render the sales report form template
+    res.render("admin/sales-report", { title: "Sales Report" });
+  })
+  .post(verifyLogin, async (req, res) => {
+    // Get the start date and end date from the request body
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+
+    try {
+      // Fetch the sales data based on the date filter
+      const salesData = await orderHelpers.getSalesReport(startDate, endDate);
+      // Generate the sales report PDF using a PDF generation library
+      // const salesReportPdf = orderHelpers.generateSalesReportPdf(salesData);
+      const salesReportPdf = orderHelpers.generateSalesReportPdf2(salesData);
+
+
+      // Set the response headers for file download
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", "attachment; filename=sales-report.pdf");
+
+      // Send the sales report PDF as the response
+      salesReportPdf.pipe(res);
+
+    } catch (error) {
+      console.error("Error generating sales report:", error);
+      res.status(500).json({ error: "Error generating sales report" });
+    }
+  });
+
+//--------------filter sales table-------------//
+router.post('/get-orderData-ajax',async(req,res)=>{
+  console.log("filter router");
+  const startDate = req.body.startDate;
+  const endDate = req.body.endDate;
+
+  console.log('Start Date:', startDate);
+  console.log('End Date:', endDate);
+
+  const orderData = await orderHelpers.getSalesReport(startDate, endDate);
+  console.log(" orderData ", orderData );
+
+  res.json({orderData});
+
+})
+
+
 //--------------------------CATEGORY SECTION--------------------------//
 
-router.get("/categories", async (req, res) => {
+router.get("/categories", verifyLogin, async (req, res) => {
   const categories = await db().collection("category").find().toArray();
   res.render("admin/categories/view-categories", {
     categories,
@@ -122,14 +186,14 @@ router.get("/categories", async (req, res) => {
 
 //add category
 
-router.get("/categories/add", (req, res) => {
+router.get("/categories/add", verifyLogin, (req, res) => {
   res.render("admin/categories/add", {
     errorMsg: req.session.adminErrorMsg,
   });
   req.session.adminErrorMsg = false;
 });
 
-router.post("/categories/add", async (req, res) => {
+router.post("/categories/add", verifyLogin, async (req, res) => {
   console.log('req.body in add', req.body);
   const existingCategory = await categoryHelpers.getcategoryByName(req.body);
   console.log('existingCategory', existingCategory);
@@ -155,7 +219,7 @@ router.post("/categories/add", async (req, res) => {
 
 //Edit Category
 //TODO verifylogin
-router.get("/categories/edit-categories/:id", (req, res) => {
+router.get("/categories/edit-categories/:id", verifyLogin, (req, res) => {
   const categoryId = req.params.id;
   categoryHelpers.getCategoryById(categoryId, (category) => {
     res.render("admin/categories/edit-categories", {
@@ -193,7 +257,7 @@ router.post("/categories/edit-categories/:id", uploadCategory.single("imageUplod
     const relativeImagePath = req.file.path;
     strippedRelativeImagePath = relativeImagePath.replace('public', '');
 
-    const oldImagePath = 'public/'+ req.body.image_url;
+    const oldImagePath = 'public/' + req.body.image_url;
     if (oldImagePath) {
       const oldImageFilePath = path.join(__dirname, '../', oldImagePath);
       fs.unlink(oldImageFilePath, (error) => {
@@ -387,6 +451,14 @@ router.get("/orders", verifyLogin, async (req, res) => {
   res.render("admin/orders/view-orders", { orders });
 });
 
+// router.get("/orders", verifyLogin, async (req, res) => {
+//   start date =
+//   end date =
+//   let orders = await orderHelpers.getOrderListWithUserDetails(sd, ed);
+//   console.log("orders in admin=======>", orders);
+//   res.render("admin/orders/view-orders", { orders });
+// });
+
 router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
   console.log("hello entered to route ");
   let orderDetails = await orderHelpers.fetchOrderDetailsWithProduct(
@@ -461,19 +533,24 @@ router.get("/coupons/add", verifyLogin, (req, res) => {
   res.render("admin/coupons/add", { errorMsg: req.session.adminCouponErr });
   req.session.adminCouponErr = false;
 });
-router.post("/coupons/add", async (req, res) => {
+router.post("/coupons/add", verifyLogin, async (req, res) => {
+  console.log("req.body", req.body);
   //check coupon exist or not
   const slug = req.body.slug;
+  console.log("slug", slug);
   const existingCoupon = await couponHelpers.getCouponBySlug(slug);
+  console.log("existingCoupon", existingCoupon);
   if (existingCoupon) {
     req.session.adminCouponErr = "Coupon with the same slug already exists";
     return res.redirect("/admin/coupons/add");
   }
 
   const couponCode = req.body.coupon_code;
+  console.log("couponCode ", couponCode);
   const getCouponByCouponCode = await couponHelpers.getCouponByCouponCode(
     couponCode
   );
+  console.log("getCouponByCouponCode", getCouponByCouponCode);
   if (getCouponByCouponCode === null) {
     try {
       await couponHelpers.addCoupon(req.body);
@@ -561,9 +638,11 @@ router.get("/banners/add", verifyLogin, async (req, res) => {
 
 router.post("/banners/add", async (req, res) => {
   const banner = await bannerHelpers.addBanner(req.body);
+  console.log("body",req.body);
   req.session.adminSuccessMsg = "Successfully Added";
   res.redirect("/admin/banners");
 });
+
 //...Delete
 
 router.get("/banners/delete/:id", (req, res) => {
@@ -590,5 +669,13 @@ router.post("/banners/edit/:id", async (req, res) => {
   req.session.adminSuccessMsg = "Banner Updated Successfully";
   res.redirect("/admin/banners");
 });
+
+//--------404 ----//
+
+router.get("/404", (req, res) => {
+  console.log("404");
+  res.render("404")
+})
+
 
 module.exports = router;

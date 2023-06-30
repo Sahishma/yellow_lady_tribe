@@ -7,9 +7,7 @@
     </ol>
 </nav>
 <hr>
-
 {{!-- BOF breadcrumb --}}
-
 
 
 
@@ -19,15 +17,7 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 {{!-- <h6 class="mb-4">Add Coupons</h6> --}}
-                <form action="/admin/banners/add" method="post" id="addProducts_form" enctype="multipart/form-data">
-
-                    <div class="row mb-3">
-                        <label for="image_url" class="col-sm-2 col-form-label">Image URL</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="image_url" name="image_url" required />
-                        </div>
-                    </div>
-                  
+                <form action="/admin/banners/add" method="post" id="addProducts_form">
 
                     <div class="row mb-3">
                         <label for="main_title" class="col-sm-2 col-form-label">Main Title</label>
@@ -40,6 +30,13 @@
                         <label for="sub title" class="col-sm-2 col-form-label">Sub Title</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="sub_title" name="sub_title" required />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="image_url" class="col-sm-2 col-form-label">Image</label>
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" id="image_url" name="image_url" required>
                         </div>
                     </div>
 

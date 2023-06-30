@@ -30,10 +30,11 @@
                         {{!-- <td class="align-middle">Rs.{{this.rowTotal}}</td> --}}
                         <td class="align-middle" id="rowTotal-{{this.product._id}}">Rs.{{this.rowTotal}}</td>
                         <td class="align-middle">
-                            <a href="/cart/remove-cart-item/{{this.item}}" class="btn btn-sm btn-primary" onclick="return confirm('you\'re Removing{{this.product.product_name}} from cart')"><i class="fa fa-times"></i></a>
+                            <a href="#" class="btn btn-sm btn-primary" onclick="confirmRemove('{{this.product.product_name}}', '{{this.item}}')"><i class="fa fa-times"></i></a>
+
                         </td>
                     </tr>
-        
+
                     {{/each}}
 
 
@@ -46,7 +47,7 @@
                     <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
                 </div>
                 {{!-- <div class="card-body">
-                   
+
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Shipping</h6>
                         <h6 class="font-weight-medium">Rs.10</h6>
@@ -55,7 +56,7 @@
                         <h6 class="font-weight-medium">Delivery Charge</h6>
                         <h6 class="font-weight-medium">Rs.90</h6>
                     </div>
-                  
+
                 </div> --}}
                 <div class="card-footer border-secondary bg-transparent">
                     <div class="d-flex justify-content-between mt-2">
@@ -70,34 +71,7 @@
 </div>
 
 <script>
-    // function changeQuantity(cartId, proId, userId, count) {
-    // console.log('========...====>',cartId, proId,userId,count)
-    //   let quantity = parseInt(document.getElementById(proId).innerHTML)
-    //  count = parseInt(count)
-    // $.ajax({
-    //    url: '/change-product-quantity',
-    //   data: {
-    //       user: userId,
-    //      cart: cartId,
-    //      product: proId,
-    //      count: count,
-    //      quantity: quantity
-    //  },
-    //  method: 'post',
-    //  success: (response) => {
-    //     if (response.removeProduct) {
-    //         alert("Product removed from cart")
-    //       location.reload()
-    //   } else {
-    //      console.log(response)
-    //      document.getElementById(proId).innerHTML = quantity + count
-    //     document.getElementById('total').innerHTML = response.total
-    //  }
 
-    //  }
-    // });
-
-    // }
 
     function changeQuantity(cartId, proId, userId, count) {
         console.log("checking---------------->", cartId, proId, userId, count)
@@ -120,8 +94,12 @@
                 method: 'post',
                 success: (response) => {
                     if (response.removeProduct) {
-                        alert("Product removed from cart");
-                        location.reload();
+                        Swal.fire({
+                            title: "Product Removed",
+                            text: "Product removed from cart.",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        });
                     } else {
 
                         location.reload();
@@ -138,6 +116,27 @@
         }
     }
 
+    function confirmRemove(productName, item) {
+        console.log('item to delete',item);
+        Swal.fire({
+            title: "Confirmation",
+            text: `Are you sure you want to remove ${productName} from the cart?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with removing the product
+                window.location.href = `/cart/remove-cart-item/${item}`;
+            }
+        });
+
+        // Prevent the default link behavior
+        return false;
+    }
 
 
 

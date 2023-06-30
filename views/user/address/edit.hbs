@@ -1,5 +1,3 @@
-
-
 {{!-- BOF breadcrumb --}}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb mt-4">
@@ -22,7 +20,7 @@
                     <div class="row mb-3 form-group">
                         <label for="User Name" class="col-sm-2 col-form-label">User Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="user_name" id="user_name" value = "{{addressDetail.address.[0]}}"required>
+                            <input type="text" class="form-control" name="user_name" id="user_name" value="{{addressDetail.address.[0]}}" required>
                         </div>
                     </div>
                     <div class="row mb-3 form-group">
@@ -42,31 +40,31 @@
                     </div>
                     <div class="col-md-6 form-group">
                         <label>State</label>
-                        <input class="form-control" type="text" placeholder="New York" name="state" id="state" value="{{addressDetail.address.[3]}}"required>
+                        <input class="form-control" type="text" placeholder="New York" name="state" id="state" value="{{addressDetail.address.[3]}}" required>
                     </div>
                     <div class="col-md-6 form-group">
                         <label>PIN Code</label>
-                        <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode" value="{{addressDetail.address.[4]}}"required>
+                        <input class="form-control" type="number" placeholder="123" name="pinCode" id="pinCode" value="{{addressDetail.address.[4]}}" required>
                         <input class="form-control" type="text" placeholder="user" name="userId" id="" value="{{user._id}}" hidden>
                     </div>
                     <fieldset class="row mb-3">
                         <legend class="col-form-label col-sm-2 pt-0">Address Type</legend>
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="address_type" id="Home" value="Home">
-                                <label class="form-check-label" for="gridRadios1">
+                                <input class="form-check-input" type="radio" name="address_type" id="Home" value="Home" {{#if (eq addressDetail.address_type "Home" )}}checked{{/if}}>
+                                <label class="form-check-label" for="Home">
                                     Home
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="address_type" id="work_place" value="Work Place">
-                                <label class="form-check-label" for="gridRadios2">
+                                <input class="form-check-input" type="radio" name="address_type" id="work_place" value="Work Place" {{#if (eq addressDetail.address_type "Work Place" )}}checked{{/if}}>
+                                <label class="form-check-label" for="work_place">
                                     Work Place
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="address_type" id="others" value="Others">
-                                <label class="form-check-label" for="gridRadios2">
+                                <input class="form-check-input" type="radio" name="address_type" id="others" value="Others" {{#if (eq addressDetail.address_type "Others" )}}checked{{/if}}>
+                                <label class="form-check-label" for="others">
                                     Others
                                 </label>
                             </div>
@@ -76,7 +74,7 @@
 
                         <div class="col-sm-10">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="gridCheck1">
+                                <input class="form-check-input" type="checkbox" id="gridCheck1" name="default_address">
                                 <label class="form-check-label" for="gridCheck1">
                                     Make this as my default address
                                 </label>

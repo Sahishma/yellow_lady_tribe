@@ -14,6 +14,10 @@ const session=require('express-session');
 const flash = require('connect-flash');
 const exphbs  = require('express-handlebars');
 const hbs = require('hbs');
+const moment = require('moment');
+const PDFDocument = require('pdfkit');
+const Swal = require('sweetalert2');
+
 // const fileUpload = require('express-fileupload');
 const multer = require('multer');
 const handlebars = require('handlebars');
@@ -74,7 +78,14 @@ handlebars.registerHelper('isGreaterThan', function(value, threshold, options) {
   }
 });
 
+handlebars.registerHelper('formatDate', function(date) {
+  return moment(date).format('MMM Do YY');
+});
 
+handlebars.registerHelper('incrementIndex', function (index) {
+  // Add 1 to the index
+  return index + 1;
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -85,10 +96,10 @@ app.engine('hbs', exphbs.create({
   defaultLayout: 'adminLayout',
   layoutsDir: __dirname + '/views/layout/',
   partialsDir: __dirname + '/views/partials/',
-  helpers: helpers,
+  helpers: {
+    isPathActive: handlebars.helpers.isPathActive
+  },
   handlebars: handlebars
-
-
 }).engine);
 
 app.use(logger("dev"));

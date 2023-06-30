@@ -5,6 +5,7 @@ const { response } = require("../app");
 const ObjectId = require("mongodb").ObjectId;
 const Razorpay = require("razorpay");
 const { resolve } = require("path");
+const moment = require('moment');
 var instance = new Razorpay({
   key_id: "rzp_test_KKEibDc3VJc3iI",
   key_secret: "r2pV8KXmSumXQaVmUEqKYVqo",
@@ -580,7 +581,6 @@ module.exports = {
       let orderObj = {
         deliveryDetails: {
           firstName: order.firstName,
-          lastName: order.lastName,
           mobile: order.mobileNumber,
           address: order.address,
           city: order.city,
@@ -630,16 +630,61 @@ module.exports = {
     });
   },
 
+
   getUserOrders: (userId) => {
     return new Promise(async (resolve, reject) => {
-      let orders = await db()
-        .collection(collections.ORDER_COLLECTION)
-        .find({ userId: new ObjectId(userId) })
-        .sort({ date: -1 })
-        .toArray();
-      resolve(orders);
+      try {
+        let orders = await db()
+          .collection(collections.ORDER_COLLECTION)
+          .aggregate([
+            { $match: { userId: new ObjectId(userId) } },
+            { $sort: { date: -1 } },
+            {
+              $lookup: {
+                from: "user",
+                localField: "userId",
+                foreignField: "_id",
+                as: "user",
+              },
+            },
+            { $unwind: "$user" },
+            {
+              $project: {
+                orderId: { $toString: "$_id" },
+                payment: 1,
+                totalAmount: 1,
+                status: 1,
+                username: "$user.username",
+                date: {
+                  $dateToString: { format: "%Y-%m-%d", date: "$date" },
+                },
+              },
+            },
+          ])
+          .toArray();
+  
+        const formattedOrders = orders.map((order) => ({
+          orderId: order.orderId,
+          payment: order.payment,
+          totalAmount: order.totalAmount,
+          status: order.status,
+          date: moment(order.date).format("MMM Do YY"),
+          username: order.username,
+        }));
+  
+        resolve(formattedOrders);
+      } catch (error) {
+        reject(error);
+      }
     });
   },
+  
+
+  
+  
+  
+
+  
 
   getOrderProducts: (orderId) => {
     console.log("is order id received to get ordered product? ====>", orderId);

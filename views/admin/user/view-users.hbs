@@ -30,7 +30,7 @@
 
                                 {{#each users}}
                                 <tr>
-                                    <th scope="row">{{@index}}</th>
+                                    <th scope="row">{{incrementIndex @index}}</th>
                                     <td>{{this.username}}</td>
                                     <td>{{this.email}}</td>
                                     <td>{{this.phone}}</td>

@@ -19,7 +19,7 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 {{!-- <h6 class="mb-4">Add Coupons</h6> --}}
-                <form action="/admin/coupons/add" method="post" id="addProducts_form" enctype="multipart/form-data">
+                <form action="/admin/coupons/add" method="post" id="addProducts_form">
 
                     <div class="row mb-3">
                         <label for="coupon_code" class="col-sm-2 col-form-label">Title</label>
@@ -37,7 +37,7 @@
                     <div class="row mb-3">
                         <label for="coupon_code" class="col-sm-2 col-form-label"> Coupon Code</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="coupon_code" name="coupon_code" required />
+                            <input type="text" class="form-control" id="coupon_code" name="coupon_code" required oninput="validateCouponCode()" />
                         </div>
                     </div>
 
@@ -80,6 +80,22 @@
         } else {
             // Clear the error message
             slugInput.setCustomValidity('');
+        }
+    }
+
+    function validateCouponCode() {
+        var couponCodeInput = document.getElementById('coupon_code');
+        var couponCode = couponCodeInput.value.trim();
+
+        // Regular expression to validate the coupon code (allowing lowercase letters, capital letters, and underscores)
+        var couponCodePattern = /^[a-zA-Z_]+$/;
+
+        if (!couponCodePattern.test(couponCode)) {
+            // Display an error message
+            couponCodeInput.setCustomValidity('Invalid coupon code. Only lowercase letters, capital letters, and underscores are allowed.');
+        } else {
+            // Clear the error message
+            couponCodeInput.setCustomValidity('');
         }
     }
 </script>

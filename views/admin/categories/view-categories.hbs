@@ -34,7 +34,7 @@
 
                             {{#each categories}}
                             <tr>
-                                <th scope="row">{{@index}}</th>
+                                <th scope="row">{{incrementIndex @index}}</th>
                                 <td>{{this.category_name}}</td>
                                 <td><img style="width: 50px;height:50px" src="{{this.image_url}}" alt=""></td>
                                 <td>

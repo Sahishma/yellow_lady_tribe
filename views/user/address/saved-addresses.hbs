@@ -72,6 +72,13 @@
     font-size: 14px;
     cursor: pointer;
   }
+
+    .selected {
+    border: 2px solid rgba(231, 98, 16, 0.474);
+    box-shadow: 0px 0px 5px rgba(231, 98, 16, 0.474);
+    /* Add any other styles you want to apply to the selected card */
+  }
+
 </style>
 
 <div class="container">
@@ -82,11 +89,15 @@
   </div>
   <div class="address-list">
     {{#each allAddress}}
-    <div class="address-card">
+    <div class="address-card {{#if this.default_address}}selected{{/if}}">
       <div class="address-card-header">
-        <div class="address-type">{{this.address_type}}</div>
+        {{#if this.default_address}}
+          <div class="address-type">Default Address</div>
+        {{else}}
+          <div class="address-type">{{this.address_type}}</div>
+        {{/if}}
         <div class="address-card-actions">
-            <a href="/address/edit/{{this._id}}" class="btn btn-secondary m-2">Edit</a>
+          <a href="/address/edit/{{this._id}}" class="btn btn-secondary m-2">Edit</a>
           <a href="/address/delete/{{this._id}}" class="btn btn-danger m-2" onclick="return confirm('You\'re deleting this Address permanently')">Delete</a>
         </div>
       </div>
@@ -97,10 +108,13 @@
         <p>{{this.address.[3]}}</p>
         <p>{{this.address.[4]}}</p>
       </div>
-      <div class="Phone-number"><p><strong>Phone number:</strong> {{this.phone}}</p></div>
+      <div class="Phone-number">
+        <p><strong>Phone number:</strong> {{this.phone}}</p>
+      </div>
     </div>
     {{/each}}
   </div>
 </div>
+
 
 

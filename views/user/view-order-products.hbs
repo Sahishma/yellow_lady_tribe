@@ -17,8 +17,9 @@
                     {{#isEqual orderDetails.status 'Cancelled'}}
                     <p style="color: red;">Order Cancelled</p>
                     {{else}}
-                    <a href="/cancel-order/{{orderDetails.orderId}}" class="btn btn-secondary m-2" onclick="console.log('{{this.orderId}}'); return confirm('You\'re cancelling this Order')"> <button class="btn btn-danger">Cancel
-                            Order</button> </a>
+                    <a href="#" class="btn btn-secondary m-2" onclick="return confirmCancel('{{orderDetails.orderId}}')">
+                        <button class="btn btn-danger">Cancel Order</button>
+                    </a>
                     {{/isEqual}}
 
 
@@ -116,3 +117,56 @@
 
 
 </section>
+<script>
+  $(document).ready(function() {
+    function confirmCancel(orderId) {
+      console.log('order to cancel', orderId);
+      const product = {{#each orderDetails.products}}{{this}}{{/each}};
+      const productName = product.productName;
+      Swal.fire({
+        title: "Confirmation",
+        text: `Are you sure you want to Cancel ${productName}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        cancelButtonText: "Cancel",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User confirmed, proceed with canceling the order
+          window.location.href = `/cancel-order/${orderId}`;
+        }
+      });
+
+      // Prevent the default link behavior
+      return false;
+    }
+  });
+</script>
+{{!-- <script>
+  function confirmCancel(orderId) {
+    console.log('order to cancel', orderId);
+    const product = {{#each orderDetails.products}}{{this}}{{/each}};
+    const productName = product.productName;
+    Swal.fire({
+      title: "Confirmation",
+      text: `Are you sure you want to Cancel ${productName}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "Cancel",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed, proceed with canceling the order
+        window.location.href = `/cancel-order/${orderId}`;
+      }
+    });
+
+    // Prevent the default link behavior
+    return false;
+  }
+</script> --}}
+

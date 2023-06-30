@@ -1,6 +1,7 @@
 const { db } = require("../config/connection");
 const collections = require("../config/collections");
 const bcrypt = require("bcrypt");
+const moment = require('moment');
 
 module.exports = {
   //* login *//

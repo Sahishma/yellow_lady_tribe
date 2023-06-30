@@ -10,6 +10,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Order ID</th>
+                                <th scope="col">Date</th>
                                 <th scope="col">Total Amount</th>
                                 <th scope="col">Payment Method</th>
                                 <th>Order Status</th>
@@ -20,12 +21,13 @@
 
                             {{#each orders}}
                             <tr>
-                                <th scope="row">{{this._id}}</th>
+                                <th scope="row">{{this.orderId}}</th>
+                                <td>{{this.date}}</td>
                                 <td>{{this.totalAmount}}</td>
                                 <td>{{this.payment}}</td>
                                 <td>{{this.status}}</td>
                                 <td>
-                                    <a href="/view-order-products/{{this._id}}" class="btn btn-primary m-2">View Details</button></a>
+                                    <a href="/view-order-products/{{this.orderId}}" class="btn btn-primary m-2">View Details</button></a>
                                 </td>
                             </tr>
 

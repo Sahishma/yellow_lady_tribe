@@ -93,20 +93,44 @@ module.exports = {
             throw error
         }
     },
-    getDefaultAddress:async(userId)=>{
-        console.log("getDefaultAddress",userId);
-        try{
-            let defaultAddress = await db()
-            .collection(collections.ADDRESS_COLLECTION)
-            .findOne({user_id:new ObjectId(userId)},{default_address:1});
-            return defaultAddress
-        }catch(error){
-            console.log(error);
-            throw error
-        }
-
+    getDefaultAddress: async (userId) => {
+      try {
+        const defaultAddress = await db()
+          .collection(collections.ADDRESS_COLLECTION)
+          .findOne({
+            user_id: new ObjectId(userId),
+            default_address: { $exists: true } // Check if the field exists
+          });
+    
+        return defaultAddress;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    
       
+
+    unmarkDefaultAddress: async (userId) => {
+      try {
+        await db()
+          .collection(collections.ADDRESS_COLLECTION)
+          .updateMany(
+            { user_id: new ObjectId(userId), default_address: "on" },
+            { $set: { default_address: null } }
+          );
+        await db()
+          .collection(collections.ADDRESS_COLLECTION)
+          .updateOne(
+            { user_id: new ObjectId(userId) },
+            { $set: { default_address: "on" } }
+          );
+      } catch (error) {
+        console.error("Error unmarking default address:", error);
+        throw error;
+      }
     }
+    
 
 
 

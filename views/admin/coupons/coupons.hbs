@@ -37,7 +37,7 @@
                         <tbody>
                             {{#each getCoupons}}
                             <tr>
-                                <th scope="row">{{@index}}</th>
+                                <th scope="row">{{incrementIndex @index}}</th>
                                 <td>{{this._id}}</td>
                                 <td>{{this.title}}</td>
                                 <td>{{this.coupon_code}}</td>

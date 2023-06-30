@@ -1,27 +1,23 @@
-
 <!-- Checkout Start -->
 {{!-- <form action="/checkout" method="POST" id="checkout-form"> --}}
     <form id="checkout-form">
         <div class="container-fluid ">
             <div class="row px-xl-5">
                 <div class="col-lg-8 border">
-                    <div class="mb-4">
-                        <div class="card-header bg-secondary border-0">
-                            <h4 class="font-weight-semi-bold m-0">Shipping Address</h4>
+                    <div class="mb-4 ">
+                        <div class="card-header bg-secondary border-2">
+                            <h5 class="font-weight-light m-2">Choose your shipping address</h5>
+                            <button id="myButton">Click Me!</button>
+                            <select name="address_select" id="address_select" style="width: 100%; padding: 5px;">
+                                {{#each addresses}}
+                                <option value="{{this._id}}">{{this.address.[1]}}</option>
+                                {{/each}}
+                            </select>
                         </div>
-
                         <div class="row mt-4">
                             <div class="col-md-6 form-group">
-                                <label>First Name</label>
+                                <label>Name</label>
                                 <input class="form-control" type="text" placeholder="John" name="firstName" id="firstName" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Last Name</label>
-                                <input class="form-control" type="text" placeholder="Doe" name="lastName" id="lastName" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>E-mail</label>
-                                <input class="form-control" type="text" placeholder="example@email.com" name="email" id="email" required>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>Mobile No</label>
@@ -30,16 +26,6 @@
                             <div class="col-md-6 form-group">
                                 <label>Address </label>
                                 <input class="form-control" type="text" placeholder="123 Street" name="address" id="address" required>
-                            </div>
-                     
-                            <div class="col-md-6 form-group">
-                                <label>Country</label>
-                                <select class="custom-select">
-                                    <option selected>United States</option>
-                                    <option>India</option>
-                                    <option>Albania</option>
-                                    <option>Algeria</option>
-                                </select>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>City</label>
@@ -56,7 +42,6 @@
                             </div>
 
                         </div>
-
 
                     </div>
                 </div>
@@ -78,31 +63,6 @@
                         <div class="card-header bg-secondary border-0">
                             <h4 class="font-weight-semi-bold m-0">Order Total</h4>
                         </div>
-
-                        {{!-- <div class="card-body">
-                            <h5 class="font-weight-medium mb-3">Products</h5>
-                            <div class="d-flex justify-content-between">
-                                <p>Colorful Stylish Shirt 1</p>
-                                <p>$150</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p>Colorful Stylish Shirt 2</p>
-                                <p>$150</p>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p>Colorful Stylish Shirt 3</p>
-                                <p>$150</p>
-                            </div>
-                            <hr class="mt-0">
-                            <div class="d-flex justify-content-between mb-3 pt-1">
-                                <h6 class="font-weight-medium">Subtotal</h6>
-                                <h6 class="font-weight-medium">$150</h6>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <h6 class="font-weight-medium">Shipping</h6>
-                                <h6 class="font-weight-medium">$10</h6>
-                            </div>
-                        </div> --}}
 
                         <div class="card-footer border-secondary bg-transparent">
                             <div class="d-flex justify-content-between mt-2" id="total">
@@ -154,36 +114,38 @@
             </div>
         </div>
     </form>
-    
+
     <!-- Checkout End -->
 
 
     <script>
         console.log("ajax calling---------->")
         $("#checkout-form").submit((e) => {
-            e.preventDefault()
+            e.preventDefault();
             $.ajax({
                 url: '/checkout',
                 method: 'post',
                 data: $('#checkout-form').serialize(),
                 success: (response) => {
-                    console.log(response)
-                    //alert(response)
-                    alert('Order placed sucessfully.');
-                    if (response.codSuccess) {
-                        console.log("this is if case")
-                        console.log("response", response);
-                        console.log("status in ajax---------->", response.status);
-                        //const orderId = response.orderId;
-                        console.log("id in response---------->", response.orderId);
-                        location.href = '/view-order-products/' + response.orderId;
-                    } else {
-                        console.log("this is else case")
-                        razorpayPayment(response)
-                    }
+                    console.log(response);
+                    Swal.fire({
+                        title: 'Order Placed',
+                        text: 'Your order placed successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (response.codSuccess) {
+                                location.href = '/view-order-products/' + response.orderId;
+                            } else {
+                                razorpayPayment(response);
+                            }
+                        }
+                    });
                 }
-            })
-        })
+            });
+        });
+
         function razorpayPayment(order) {
             var options = {
                 "key": "rzp_test_KKEibDc3VJc3iI", // Enter the Key ID generated from the Dashboard
@@ -276,4 +238,45 @@
                 }
             });
         }
+
+        $(document).ready(function () {
+            // Listen for change event on the select element
+            $('#address_select').change(function () {
+                // Get the selected value
+                var selectedValue = $(this).val();
+                console.log('selectedValue', selectedValue);
+
+                // Make the AJAX call
+                $.ajax({
+                    url: '/address/get_json/' + selectedValue, // Replace with the actual API endpoint
+                    type: 'GET',
+                    // Pass the selected value as a parameter
+                    success: function (response) {
+                        // Handle the successful response
+                        console.log('response', response);
+                        $('#firstName').val(response.addressDetail.address[0])
+                        $('#mobileNumber').val(response.addressDetail.phone)
+                        $('#address').val(response.addressDetail.address[1])
+                        $('#city').val(response.addressDetail.address[2])
+                        $('#state').val(response.addressDetail.address[3])
+                        $('#pinCode').val(response.addressDetail.address[4])
+                        // Update the UI with the retrieved details
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error
+                        console.error(error);
+                    }
+                });
+            });
+        });
+
+
+        // Get the button element by its id
+        const myButton = document.getElementById('myButton');
+
+        // Add an event listener to the button
+        myButton.addEventListener('click', () => {
+            // Display the SweetAlert
+            Swal.fire('Button Clicked!', 'You clicked the button!', 'success');
+        });
     </script>

@@ -47,6 +47,8 @@ router.get("/", async (req, res) => {
   });
 });
 
+
+
 const ITEMS_PER_PAGE = 8;
 router.get("/products/:category_id", async (req, res) => {
   const category_id = req.params.category_id;
@@ -281,7 +283,9 @@ router.get("/add-to-cart/:id", (req, res) => {
 // incrementing and decrimenting quantity
 router.post("/change-product-quantity", verifyLogin, (req, res, next) => {
   userHelpers.changeProductQuantity(req.body).then(async (response) => {
+    console.log("changeProductQuantity",response);
     response.total = await userHelpers.getTotalAmount(req.body.user);
+    console.log("total",response.total);
     res.json(response);
   });
 });
@@ -304,7 +308,9 @@ router.get("/checkout", verifyLogin, async (req, res) => {
   }
   const categories = await categoryHelpers.getAllCategories();
   let total = await userHelpers.getTotalAmount(req.session.user._id);
+  let addresses = await addressHelpers.getAllAddress(req.session.user._id)
   console.log("req.session.user",req.session.user);
+  console.log("adresses",addresses);
   res.render("user/checkout", {
     loginErr: req.session.userLoginErr,
     layout: "userLayout",
@@ -312,6 +318,7 @@ router.get("/checkout", verifyLogin, async (req, res) => {
     total,
     categories,
     cartCount,
+    addresses,
   });
 });
 
@@ -357,6 +364,7 @@ router.get("/orders", verifyLogin, async (req, res) => {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let orders = await userHelpers.getUserOrders(req.session.user._id);
+  console.log("orders to check id [[[[[[[]]]]]]]]]]", orders);
   res.render("user/orders", {
     user: req.session.user,
     layout: "userLayout",
@@ -505,15 +513,52 @@ router.get("/profile",verifyLogin, async (req, res) => {
   console.log("hi profile");
    console.log("req.session.user._id",req.session.user._id);
   const user = await userHelpers.getUserDetails(req.session.user._id);
+  let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
+  const categories = await categoryHelpers.getAllCategories();
   console.log("user", user);
-  res.render("user/profile", { layout: "userLayout", user });
+  res.render("user/profile", { layout: "userLayout", user,cartCount,categories });
 });
 
 //---Saved Addresses
-router.get("/saved-addresses",verifyLogin,async(req,res)=>{
-  let allAddress = await addressHelpers.getAllAddress(req.session.user._id)
-  res.render("user/address/saved-addresses",{ layout: "userLayout",allAddress})
-})
+router.get("/saved-addresses", verifyLogin, async (req, res) => {
+  try {
+    const allAddress = await addressHelpers.getAllAddress(req.session.user._id);
+
+    // Sort addresses with the default address at the beginning
+    const sortedAddresses = allAddress.sort((a, b) => {
+      if (a.default_address && !b.default_address) {
+        return -1; // a is default address, so it comes first
+      } else if (!a.default_address && b.default_address) {
+        return 1; // b is default address, so it comes first
+      } else {
+        return 0; // both addresses have the same default_address value, maintain the original order
+      }
+    });
+
+    let cartCount = null;
+    if (req.session.user) {
+      cartCount = await userHelpers.getCartCount(req.session.user._id);
+    }
+
+    const categories = await categoryHelpers.getAllCategories();
+
+    res.render("user/address/saved-addresses", {
+      layout: "userLayout",
+      allAddress: sortedAddresses,
+      cartCount,
+      categories,
+      user: req.session.user,
+    });
+  } catch (error) {
+    console.log(error);
+    // Handle any errors that occur during fetching addresses
+    res.render("error", { error });
+  }
+});
+
 // add address
 router.get("/address/add",verifyLogin,(req,res)=>{
   
@@ -528,6 +573,11 @@ router.get("/address/add",verifyLogin,(req,res)=>{
 })
 router.post("/address/add",verifyLogin,async(req,res)=>{
   console.log('add address',req.body);
+
+  if (req.body.default_address === "on") {
+    await addressHelpers.unmarkDefaultAddress(req.session.user._id);
+  }
+
    const newAddress = await addressHelpers.addAddress(req.body);
    console.log("newAddress",newAddress);
    if (newAddress.acknowledged == true) {
@@ -546,7 +596,15 @@ router.get("/address/edit/:id",async(req,res)=>{
   res.render("user/address/edit",{
     layout: "userLayout",
     addressDetail,
+    user: req.session.user,
   })
+})
+
+router.get("/address/get_json/:id",async(req,res)=>{
+  console.log("hello edit address");
+  let addressDetail  = await addressHelpers.getAddressDetail(req.params.id)
+  console.log("addressDetail",addressDetail);
+  res.json({addressDetail});
 })
 
 router.post("/address/edit/:id",async(req,res)=>{
@@ -577,11 +635,18 @@ router.get("/edit-profile", verifyLogin, async (req, res) => {
   try {
     const user = await userHelpers.getUserDetails(req.session.user._id);
     const address = await addressHelpers.getDefaultAddress(req.session.user._id);
+    const categories = await categoryHelpers.getAllCategories();
+    let cartCount = null;
+  if (req.session.user) {
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+  }
     console.log("address",address);
     res.render("user/edit-profile", {
       layout: "userLayout",
       user,
       address,
+      categories,
+      cartCount,
       successMsg: req.session.userSuccessMsg,
       errorMsg: req.session.userErrorMsg,
     });
@@ -608,6 +673,12 @@ router.post("/edit-profile", verifyLogin, async (req, res) => {
   res.redirect("/edit-profile");
   
 });
+
+//------------404------------------//
+
+router.get("/404",(req,res)=>{
+  res.render("404",{layout: "userLayout"})
+})
 
 //logout
 
