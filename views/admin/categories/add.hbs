@@ -1,46 +1,52 @@
 {{!-- BOF breadcrumb --}}
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb mt-4">
-        <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+  <ol class="breadcrumb mt-4">
+    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
         <li class="breadcrumb-item"><a href="/admin/categories">Categories</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Add Categories</li>
-    </ol>
+    <li class="breadcrumb-item active" aria-current="page">Edit Categories</li>
+  </ol>
 </nav>
 <hr>
 
 {{!-- BOF breadcrumb --}}
-
-
-
 
 <!-- Form Start -->
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
-                <h6 class="mb-4">Add Category</h6>
-                <form action="/admin/categories/add" method="POST"  enctype="multipart/form-data">
-                <input type="text" id="test" name="test">
-                 <input type="file" class="form-control" id="image" name="image"  >
-                      
+                <h6 class="mb-4">Edit Category</h6>
+                <form action="/admin/categories/add" method="post" id="addCategory_form" enctype="multipart/form-data">
                     {{!-- <div class="row mb-3">
-                        <label for="category_name" class="co    l-sm-2 col-form-label">Name</label>
+                        <label for="category_name" class="col-sm-2 col-form-label">Catrgory name</label>
+                        <input type="text" class="form-control" value="{{category.category_name}}" id="category_name" name="category_name"
+                            aria-describedby="emailHelp">
+                    </div> --}}
+
+                    <div class="row mb-3">
+                        <label for="category_name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="category_name" name="category_name" required />
+                          <input type="text" class="form-control" value="" id="category_name" name="category_name" required
+                            aria-describedby="emailHelp">  
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <label for="description" class="col-sm-2 col-form-label">Description</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" name="description" id="description" rows="5"></textarea>
+                            {{!-- <input type="text" class="form-control" id="description" name="discription" required/> --}}
+                            <textarea class="form-control" name="description" id="description" required rows="5" ></textarea>
                         </div>
                     </div>
+
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
+                        <img src="" alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
                         <div class="col-sm-10">
-                            <input type="file" class="form-control" id="image" name="image"  required>
+                            <input type="file" class="form-control" id="imageFile" name="imageFile"  onchange="viewImage(event)" required >
                         </div>
-                    </div> --}}
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
@@ -48,3 +54,10 @@
     </div>
 </div>
 <!-- Form End -->
+
+<script>
+    function viewImage(event) {
+        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
+    }
+
+</script>

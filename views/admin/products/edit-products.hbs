@@ -16,7 +16,7 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 <h6 class="mb-4">Edit Product</h6>
-                <form action="/admin/products/edit-products/{{products._id}}" method="post" id="editProducts_form" >
+                <form action="/admin/products/edit-products/{{products._id}}" method="post" id="editProducts_form" enctype="multipart/form-data">
 
                     <div class="row mb-3">
                         <label for="category_id" class="col-sm-2 col-form-label">Category</label>
@@ -94,12 +94,24 @@
                     </div>
 
 
-                    <div class="row mb-3">
+                    {{!-- <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <img src="/img/{{products._id}}.jpg" alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
                         <div class="col-sm-10">
                             <input type="file" class="form-control" id="image" name="image" onchange="viewImage(event)">
                         </div>
+                    </div> --}}
+
+                    <div class="row mb-3">
+                        <label for="image" class="col-sm-2 col-form-label">Image</label>
+                        {{#each products.image_urls}}
+                          <img src={{this}} alt="" style="width:100px;height:auto" id="imgView" class="pb-3">
+                        {{/each}}
+                     
+                        {{!-- <div class="col-sm-10">
+                            <input type="file" class="form-control" id="imageFile" name="imageFile" multiple>
+
+                        </div> --}}
                     </div>
                     <button type="submit" class="btn btn-primary m-2">Update</button>
                 </form>
@@ -110,9 +122,6 @@
 <!-- Form End -->
 
 <script>
-    function viewImage(event) {
-        document.getElementById('imgView').src = URL.createObjectURL(event.target.files[0])
-    }
 
 
     function validateSlug() {

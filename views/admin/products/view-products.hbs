@@ -34,7 +34,7 @@
                                 <th scope="col">Price</th>
                                 <th scope="col">Stock</th>
                                 <th scope="col">Status</th>
-                                <th>Image</th>
+                                {{!-- <th>Image</th> --}}
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -55,7 +55,7 @@
                                     <p style="color: red;">Out of Stock</p>
                                     {{/isGreaterThan}}
                                 </td>
-                                <td><img style="width: 50px;height:50px" src="/img/{{this._id}}.jpg" alt=""></td>
+                                {{!-- <td><img style="width: 50px;height:50px" src="{{this.image_urls.[0]}}" alt=""></td> --}}
                                 <td>
                                     <a href="/admin/products/edit-products/{{this._id}}" class="btn btn-primary m-2">Edit</a>
                                     <a href="/admin/products/delete-products/{{this._id}}" class="btn btn-danger m-2"

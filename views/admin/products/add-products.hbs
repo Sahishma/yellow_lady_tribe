@@ -19,7 +19,7 @@
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
                 <h6 class="mb-4">Add Product</h6>
-                <form action="/admin/products/add-products" method="post" id="addProducts_form" >
+                <form action="/admin/products/add-products" method="post" id="addProducts_form" enctype="multipart/form-data" >
 
                     <div class="row mb-3">
                         <label for="category_id" class="col-sm-2 col-form-label">Category</label>
@@ -88,7 +88,7 @@
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <div class="col-sm-10">
-                            <input type="file" class="form-control" id="image" name="image" multiple>
+                            <input type="file" class="form-control" id="imageFile" name="imageFile" multiple>
                         </div>
                     </div>
 

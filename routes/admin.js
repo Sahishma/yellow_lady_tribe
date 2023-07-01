@@ -43,26 +43,40 @@ const storage = multer.diskStorage({
 // Set up Multer storage configuration for product images
 const productStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/product/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-// Set up Multer storage configuration for category images
-const categoryStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/img/category/");
+    cb(null, "public/images/products/");
   },
   filename: (req, file, cb) => {
     const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
     cb(null, uniqueFilename);
   },
 });
+
+// Set up Multer storage configuration for category images
+const categoryStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/categories/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
+  },
+});
+
+const bannerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/banners/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
+  },
+});
+
+
 // Create Multer upload instances for product and category images
 const uploadProduct = multer({ storage: productStorage });
 const uploadCategory = multer({ storage: categoryStorage });
+const uploadBanner = multer({ storage: bannerStorage });
 
 // Create multer upload middleware
 const img = multer({ storage: storage });
@@ -155,7 +169,7 @@ router.route("/sales-report")
   });
 
 //--------------filter sales table-------------//
-router.post('/get-orderData-ajax',async(req,res)=>{
+router.post('/get-orderData-ajax', async (req, res) => {
   console.log("filter router");
   const startDate = req.body.startDate;
   const endDate = req.body.endDate;
@@ -164,9 +178,9 @@ router.post('/get-orderData-ajax',async(req,res)=>{
   console.log('End Date:', endDate);
 
   const orderData = await orderHelpers.getSalesReport(startDate, endDate);
-  console.log(" orderData ", orderData );
+  console.log(" orderData ", orderData);
 
-  res.json({orderData});
+  res.json({ orderData });
 
 })
 
@@ -178,38 +192,34 @@ router.get("/categories", verifyLogin, async (req, res) => {
   res.render("admin/categories/view-categories", {
     categories,
     successMsg: req.session.adminSuccessMsg,
-    errorMsg: req.session.adminErrMsg,
+    errorMsg: req.session.adminErrorMsg,
   });
   req.session.adminSuccessMsg = false;
-  req.session.adminErrMsg = false;
+  req.session.adminErrorMsg = false;
 });
 
 //add category
 
-router.get("/categories/add", verifyLogin, (req, res) => {
+router.get("/categories/add", (req, res) => {
   res.render("admin/categories/add", {
     errorMsg: req.session.adminErrorMsg,
   });
   req.session.adminErrorMsg = false;
 });
 
-router.post("/categories/add", verifyLogin, async (req, res) => {
+router.post("/categories/add", uploadCategory.single("imageFile"), async (req, res) => {
   console.log('req.body in add', req.body);
   const existingCategory = await categoryHelpers.getcategoryByName(req.body);
   console.log('existingCategory', existingCategory);
 
   if (existingCategory === null) {
+    const relativeImagePath = req.file.path;
+    const strippedRelativeImagePath = relativeImagePath.replace('public', '');
+
+    req.body.image_url = strippedRelativeImagePath;
     categoryHelpers.addCategory(req.body, (insertedId) => {
-      console.log("files________.", req.files);
-      let image = req.files.image;
-      image.mv("./public/img/category/" + insertedId + ".jpg", (err, done) => {
-        if (!err) {
-          req.session.adminSuccessMsg = "Successfully Added";
-          res.redirect("/admin/categories");
-        } else {
-          console.log("error while updating img", err);
-        }
-      });
+      req.session.adminSuccessMsg = "Successfully Added";
+      res.redirect("/admin/categories");
     });
   } else {
     req.session.adminErrorMsg = "Category already exists";
@@ -234,7 +244,7 @@ router.get("/categories/edit-categories/:id", verifyLogin, (req, res) => {
 
 // Update Category
 
-router.post("/categories/edit-categories/:id", uploadCategory.single("imageUploded"), async (req, res) => {
+router.post("/categories/edit-categories/:id", uploadCategory.single("imageFile"), async (req, res) => {
   console.log('category edit body', req.body);
 
   const categoryId = req.params.id; // get the ID of the category to edit from the URL
@@ -246,16 +256,18 @@ router.post("/categories/edit-categories/:id", uploadCategory.single("imageUplod
     return res.redirect("/admin/categories/edit-categories/" + categoryId);
   }
 
-  const dataToUpdate = {
-    ...req.body
-  };
+
 
   let strippedRelativeImagePath = req.body.image_url;
+  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
 
   if (req.file) {
     // Get the relative path of the uploaded image
     const relativeImagePath = req.file.path;
+    console.log("relativeImagePath", relativeImagePath);
     strippedRelativeImagePath = relativeImagePath.replace('public', '');
+    console.log("strippedRelativeImagePath", strippedRelativeImagePath);
+
 
     const oldImagePath = 'public/' + req.body.image_url;
     if (oldImagePath) {
@@ -269,6 +281,10 @@ router.post("/categories/edit-categories/:id", uploadCategory.single("imageUplod
       });
     }
   }
+
+  const dataToUpdate = {
+    ...req.body
+  };
 
   dataToUpdate.image_url = strippedRelativeImagePath
 
@@ -300,10 +316,10 @@ const getProduct = async (req, res) => {
     res.render("admin/products/view-products", {
       products,
       successMsg: req.session.adminSuccessMsg,
-      adminErrMsg: req.session.adminErrMsg,
+      errorMsg: req.session.adminErrorMsg,
     });
     req.session.adminSuccessMsg = false;
-    req.session.adminErrMsg = false;
+    req.session.adminErrorMsg = false;
   });
 };
 router.get("/products", verifyLogin, getProduct);
@@ -313,24 +329,31 @@ router.get("/products/add-products", verifyLogin, async (req, res) => {
   const categories = await categoryHelpers.getAllCategories();
   res.render("admin/products/add-products", {
     categories,
-    adminErrMsg: req.session.adminErrMsg,
+    errorMsg: req.session.adminErrorMsg,
   });
-  req.session.adminErrMsg = false;
+  req.session.adminErrorMsg = false;
 });
 
-router.post(
-  "/products/add-products",
-  img.array("image", 5),
-  verifyLogin,
-  async (req, res) => {
-    const slug = req.body.slug;
+router.post( "/products/add-products", uploadProduct.array("imageFile", 5), async (req, res) => {
+  
+  const slug = req.body.slug;
     const existingSlug = await productHelpers.getProductsBySlug(slug);
 
     if (existingSlug) {
-      req.session.adminErrMsg = "Product with the same slug already exists";
+      req.session.adminErrorMsg = "Product with the same slug already exists";
       return res.redirect("/admin/products/add-products");
     } else if (existingSlug == null) {
       try {
+
+        const imagefilesArray = req.files;
+        const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+
+
+        console.log('fileArray', imagefilesArray);
+        console.log('ImagePaths', imagePaths);
+
+        req.body.image_urls = imagePaths;
+
         productHelpers.addproduct(req.body);
 
         req.session.adminSuccessMsg = "Successfully Added";
@@ -360,25 +383,42 @@ router.get("/products/edit-products/:id", verifyLogin, async (req, res) => {
   res.render("admin/products/edit-products", { products, categories });
 });
 
-router.post("/products/edit-products/:id", verifyLogin, async (req, res) => {
+router.post("/products/edit-products/:id",  uploadProduct.array("imageFile", 5), async (req, res) => {
   const id = req.params.id;
   const slug = req.body.slug;
   console.log("id", id, "slug", slug);
   const existingSlug = await productHelpers.getProductsBySlug(slug, id);
   if (existingSlug) {
-    req.session.adminErrMsg = "Procuct with the same slug already exists";
+    req.session.adminErrorMsg = "Procuct with the same slug already exists";
     return res.redirect("/admin/products/edit-products/" + req.params.id);
   }
-  productHelpers.updateProduct(req.params.id, req.body).then(() => {
-    req.session.adminSuccessMsg = "Successfully updated";
 
-    if (req.files && "image" in req.files) {
-      let image = req.files.image;
-      image.mv("./public/img/" + id + ".jpg");
+  console.log('inside edit post');
+  console.log('req.files',req.files);
+
+  if(req.files){
+    const imagefilesArray = req.files;
+    const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+    console.log('fileArray', imagefilesArray);
+    console.log('ImagePaths', imagePaths);
+    req.body.image_urls = imagePaths;
+
+    console.log('req.body.image_urls', req.body.image_urls);
+    console.log('req.body', req.body);
+
+    if (req.body.image_urls) {
+      await productHelpers.updateProduct(req.params.id, req.body).then(() => {
+        req.session.adminSuccessMsg = "Successfully updated";
+        res.redirect("/admin/products");
+      });
     }
-
-    res.redirect("/admin/products");
-  });
+  }else{
+    await productHelpers.updateProduct(req.params.id, req.body).then(() => {
+      req.session.adminSuccessMsg = "Successfully updated";
+      res.redirect("/admin/products");
+    });
+  }
+ 
 });
 
 // router.post("/categories/edit-categories/:id", verifyLogin, async (req, res) => {
@@ -636,9 +676,18 @@ router.get("/banners/add", verifyLogin, async (req, res) => {
   res.render("admin/banners/add");
 });
 
-router.post("/banners/add", async (req, res) => {
+router.post("/banners/add", uploadBanner.single("imageFile"), async (req, res) => {
+  console.log('req.body in add', req.body);
+
+
+  const relativeImagePath = req.file.path;
+  console.log("relativeImagePath", relativeImagePath)
+  const strippedRelativeImagePath = relativeImagePath.replace('public', '');
+  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
+  req.body.image_url = strippedRelativeImagePath;
+
   const banner = await bannerHelpers.addBanner(req.body);
-  console.log("body",req.body);
+  console.log("banner", banner);
   req.session.adminSuccessMsg = "Successfully Added";
   res.redirect("/admin/banners");
 });
@@ -660,14 +709,54 @@ router.get("/banners/edit/:id", async (req, res) => {
   res.render("admin/banners/edit", {
     banner,
     errorMsg: req.session.adminBannerErr,
+    successMsg: req.session.adminSuccessMsg,
   });
   req.session.adminBannerErr = false;
+  req.session.adminSuccessMsg = false;
 });
 
-router.post("/banners/edit/:id", async (req, res) => {
-  await bannerHelpers.updateBanner(req.params.id, req.body).then(response);
-  req.session.adminSuccessMsg = "Banner Updated Successfully";
-  res.redirect("/admin/banners");
+router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, res) => {
+  console.log('banner edit body', req.body);
+
+  let strippedRelativeImagePath = req.body.image_url;
+  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
+
+  if (req.file) {
+    // Get the relative path of the uploaded image
+    const relativeImagePath = req.file.path;
+    console.log("relativeImagePath", relativeImagePath);
+    strippedRelativeImagePath = relativeImagePath.replace('public', '');
+    console.log("strippedRelativeImagePath", strippedRelativeImagePath);
+
+    const oldImagePath = 'public/' + req.body.image_url;
+
+    if (oldImagePath) {
+      const oldImageFilePath = path.join(__dirname, '../', oldImagePath);
+      fs.unlink(oldImageFilePath, (error) => {
+        if (error) {
+          console.log('Error deleting old image file:', error);
+        } else {
+          console.log('Old image file deleted:', oldImageFilePath);
+        }
+      });
+    }
+  }
+
+  const dataToUpdate = {
+    ...req.body
+  };
+
+  dataToUpdate.image_url = strippedRelativeImagePath
+
+  try {
+    let bannerId = req.params.id
+    await bannerHelpers.updateBanner(bannerId, dataToUpdate).then(response);
+    req.session.adminSuccessMsg = "Banner Updated Successfully";
+    res.redirect("/admin/banners/edit/" + bannerId);
+  } catch (error) {
+    req.session.adminErrorMsg = "Error updating banner.";
+    res.redirect("/admin/banners/edit/" + bannerId);
+  }
 });
 
 //--------404 ----//
