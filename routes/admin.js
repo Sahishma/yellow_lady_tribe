@@ -746,8 +746,10 @@ router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, r
 
   dataToUpdate.image_url = strippedRelativeImagePath
 
+  let bannerId = req.params.id
+
   try {
-    let bannerId = req.params.id
+    
     await bannerHelpers.updateBanner(bannerId, dataToUpdate).then(response);
     req.session.adminSuccessMsg = "Banner Updated Successfully";
     res.redirect("/admin/banners/edit/" + bannerId);

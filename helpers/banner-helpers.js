@@ -52,7 +52,7 @@ module.exports = {
   },
   updateBanner: (id, body) => {
     return new Promise(async (resolve, reject) => {
-      await db()
+    const result = await db()
         .collection(collections.BANNER_COLLECTION)
         .updateOne(
           { _id: new ObjectId(id) },
@@ -64,7 +64,7 @@ module.exports = {
             },
           }
         );
-      resolve(response);
+      resolve(result);
     });
   },
 };
