@@ -5,6 +5,7 @@ const orderHelpers = require("../helpers/order-helpers");
 const categoryHelpers = require("../helpers/category-helpers");
 const couponHelpers = require("../helpers/coupon-helpers");
 const addressHelpers = require("../helpers/address-helpers");
+const bannerHelpers = require("../helpers/banner-helpers");
 const router = express.Router();
 
 const verifyLogin = (req, res, next) => {
@@ -30,7 +31,9 @@ router.get("/", async (req, res) => {
   );
   console.log("products in index", products);
   const categories = await categoryHelpers.getAllCategories();
-
+  console.log("categories",categories);
+  let banners = await bannerHelpers.getAllBanners();
+  console.log("banners",banners);
   let user = req.session.user;
   let cartCount = null;
   if (req.session.user) {
@@ -42,6 +45,7 @@ router.get("/", async (req, res) => {
     categories,
     layout: "userLayout",
     cartCount,
+    banners,
   });
 });
 
@@ -502,8 +506,6 @@ router.post("/apply-coupon", verifyLogin, async (req, res) => {
     });
   }
 });
-
-//......................Banners.............//
 
 //----------Profile------------//
 
