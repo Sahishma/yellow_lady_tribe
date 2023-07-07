@@ -41,8 +41,8 @@ module.exports = {
   },
 
   updateCoupon: (couponId, body) => {
-    return new Promise((resolve, reject) => {
-      db()
+    return new Promise(async(resolve, reject) => {
+    const update = await  db()
         .collection(collections.COUPON_COLLECTION)
         .updateOne(
           { _id: new ObjectId(couponId) },
@@ -56,19 +56,15 @@ module.exports = {
             },
           }
         );
-      resolve(response);
+      resolve(update);
     });
   },
 
-  deleteCoupon:(couponId)=>{
-    return new Promise((resolve,reject)=>{
-      db()
+  deleteCoupon:async(couponId)=>{
+     const deleteCoupon =  await db()
       .collection(collections.COUPON_COLLECTION)
-      .updateOne({_id:new ObjectId(couponId)},{$set:{deleted:true}})
-      .then((response)=>{
-        resolve(response)
-      })
-    })
+      .updateOne({_id:new ObjectId(couponId)},{$set:{deleted:true}});
+        return(deleteCoupon);
   },
 
   getCouponByCouponCode:async(couponCode,couponId)=>{

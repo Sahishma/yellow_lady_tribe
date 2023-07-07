@@ -4,18 +4,7 @@
 
 <body>
 
-
-    {{#unless noNeedNav}}
-        {{>user/topbar}}
-        {{>user/navbar}}
-    {{/unless}}
-
     {{{body}}}
-
-    {{!-- //TODO: proper condition should be done to manage footer --}}
-    {{#unless noNeedNav}} 
-        {{>user/footer}}
-    {{/unless}}
    
     <!-- Back to Top -->
     <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
