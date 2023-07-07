@@ -193,6 +193,7 @@ module.exports = {
               stock: 1,
               status: 1,
               category_name: "$category.category_name",
+              image_urls:1,
             },
           },
           {

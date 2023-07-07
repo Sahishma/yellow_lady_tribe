@@ -323,6 +323,7 @@ const getProduct = async (req, res) => {
 router.get("/products", verifyLogin, getProduct);
 
 //add products
+
 router.get("/products/add-products", verifyLogin, async (req, res) => {
   const categories = await categoryHelpers.getAllCategories();
   res.render("admin/products/add-products", {
@@ -333,7 +334,6 @@ router.get("/products/add-products", verifyLogin, async (req, res) => {
 });
 
 router.post( "/products/add-products", uploadProduct.array("imageFile", 5), async (req, res) => {
-  
   const slug = req.body.slug;
     const existingSlug = await productHelpers.getProductsBySlug(slug);
 
@@ -351,7 +351,7 @@ router.post( "/products/add-products", uploadProduct.array("imageFile", 5), asyn
         console.log('ImagePaths', imagePaths);
 
         req.body.image_urls = imagePaths;
-
+        console.log("req.body", req.body);
         productHelpers.addproduct(req.body);
 
         req.session.adminSuccessMsg = "Successfully Added";
@@ -532,10 +532,10 @@ const getCoupon = async (req, res) => {
   res.render("admin/coupons/coupons", {
     successMsg: req.session.adminSuccessMsg,
     getCoupons,
-    adminErr: req.session.adminCouponErr,
+    adminErr: req.session.adminErrorMsg,
   });
   req.session.adminSuccessMsg = false;
-  req.session.adminCouponErr = false;
+  req.session.adminErrorMsg = false;
 };
 router.get("/coupons", verifyLogin, getCoupon);
 
@@ -568,8 +568,8 @@ router.get("/coupons", verifyLogin, getCoupon);
 
 router.get("/coupons/add", verifyLogin, (req, res) => {
   console.log("add coupon");
-  res.render("admin/coupons/add", { errorMsg: req.session.adminCouponErr });
-  req.session.adminCouponErr = false;
+  res.render("admin/coupons/add", { errorMsg: req.session.adminErrorMsg});
+  req.session.adminErrorMsg = false;
 });
 router.post("/coupons/add", verifyLogin, async (req, res) => {
   console.log("req.body", req.body);
@@ -579,7 +579,7 @@ router.post("/coupons/add", verifyLogin, async (req, res) => {
   const existingCoupon = await couponHelpers.getCouponBySlug(slug);
   console.log("existingCoupon", existingCoupon);
   if (existingCoupon) {
-    req.session.adminCouponErr = "Coupon with the same slug already exists";
+    req.session.adminErrorMsg = "Coupon with the same slug already exists";
     return res.redirect("/admin/coupons/add");
   }
 
@@ -599,7 +599,7 @@ router.post("/coupons/add", verifyLogin, async (req, res) => {
     }
   } else {
     // Coupon already exists
-    req.session.adminCouponErr = "Entered coupon already exists";
+    req.session.adminErrorMsg = "Entered coupon already exists";
     res.redirect("/admin/coupons/add");
   }
 });
@@ -612,9 +612,9 @@ router.get("/coupons/edit/:id", verifyLogin, async (req, res) => {
   console.log("edit coupon ---------->>>>>>>>>>", coupon);
   res.render("admin/coupons/edit", {
     coupon,
-    errorMsg: req.session.adminCouponErr,
+    errorMsg:req.session.adminErrorMsg,
   });
-  req.session.adminCouponErr = false;
+  req.session.adminErrorMsg = false;
 });
 
 router.post("/coupons/edit/:id", async (req, res) => {
@@ -626,7 +626,7 @@ router.post("/coupons/edit/:id", async (req, res) => {
   const couponId = req.params.id;
   const existingCoupon = await couponHelpers.getCouponBySlug(slug, couponId);
   if (existingCoupon) {
-    req.session.adminCouponErr = "Coupon with the same slug already exists";
+    req.session.adminErrorMsg = "Coupon with the same slug already exists";
     return res.redirect("/admin/coupons/edit/" + req.params.id);
   }
 
@@ -636,10 +636,10 @@ router.post("/coupons/edit/:id", async (req, res) => {
   let coupon = await couponHelpers.getCouponByCouponCode(couponCode, id);
   console.log("coupen fetch from db", coupon);
   if (coupon && id != null) {
-    req.session.adminCouponErr = "Coupon already exist";
+    req.session.adminErrorMsg = "Coupon already exist";
     return res.redirect("/admin/coupons/edit/" + req.params.id);
   }
-  couponHelpers.updateCoupon(req.params.id, req.body).then(response);
+  couponHelpers.updateCoupon(req.params.id, req.body);
   req.session.adminSuccessMsg = "Coupon Updated Successfully";
   res.redirect("/admin/coupons");
 });
@@ -647,10 +647,16 @@ router.post("/coupons/edit/:id", async (req, res) => {
 //.....Delete
 
 router.get("/coupons/delete/:id", verifyLogin, (req, res) => {
-  console.log("delete copoun");
-  couponHelpers.deleteCoupon(req.params.id).then(response);
-  req.session.adminSuccessMsg = "Successfully Deleted";
-  res.redirect("/admin/coupons");
+  try{
+    console.log("delete copoun");
+    couponHelpers.deleteCoupon(req.params.id);
+    req.session.adminSuccessMsg = "Successfully Deleted";
+    res.redirect("/admin/coupons");
+  }catch(error){
+    req.session.adminErrorMsg ="Error deleting coupon"
+    res.redirect("/admin/coupons");
+  }
+
 });
 
 //----------------Banner-------------//
@@ -661,10 +667,10 @@ router.get("/banners", verifyLogin, async (req, res) => {
   res.render("admin/banners/banners", {
     allBanners,
     successMsg: req.session.adminSuccessMsg,
-    adminErr: req.session.adminBannerErr,
+    adminErr: req.session.adminErrorMsg,
   });
   req.session.adminSuccessMsg = false;
-  req.session.adminBannerErr = false;
+  req.session.adminErrorMsg = false;
 });
 
 //.....Add
@@ -693,9 +699,17 @@ router.post("/banners/add", uploadBanner.single("imageFile"), async (req, res) =
 //...Delete
 
 router.get("/banners/delete/:id", (req, res) => {
-  bannerHelpers.deleteBanner(req.params.id).then(response);
-  req.session.adminSuccessMsg = "Successfully Deleted";
-  res.redirect("/admin/banners");
+  try{
+    bannerHelpers.deleteBanner(req.params.id);
+    req.session.adminSuccessMsg = "Successfully Deleted";
+    res.redirect("/admin/banners");
+  }catch(error){
+    console.log("error deleting banner");
+    req.session.adminErrorMsg = "Error Deleting Banner"
+    res.redirect("/admin/banners")
+  }
+
+
 });
 
 //...Edit
@@ -706,10 +720,10 @@ router.get("/banners/edit/:id", async (req, res) => {
   console.log("edit: banner", banner);
   res.render("admin/banners/edit", {
     banner,
-    errorMsg: req.session.adminBannerErr,
+    errorMsg:req.session.adminErrorMsg,
     successMsg: req.session.adminSuccessMsg,
   });
-  req.session.adminBannerErr = false;
+  req.session.adminErrorMsg = false;
   req.session.adminSuccessMsg = false;
 });
 
@@ -758,13 +772,6 @@ router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, r
     res.redirect("/admin/banners/edit/" + bannerId);
   }
 });
-
-//--------404 ----//
-
-router.get("/404", (req, res) => {
-  console.log("404");
-  res.render("404")
-})
 
 
 module.exports = router;

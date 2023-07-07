@@ -7,7 +7,7 @@ const state = {
 module.exports.connectToDB = async ()=> {
   try {
     const url = process.env.MONGO_URL;
-    const dbname = "yellow";
+    const dbname = process.env.MONGO_DB;
     const client = await mongoClient.connect(url);
     state.db = client.db(dbname);
 

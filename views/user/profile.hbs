@@ -6,12 +6,15 @@
 <body>
   <div class="profile-container" style="text-align: center; padding: 20px;">
     <div class="profile-info">
-      <img src="profile-picture.jpg" alt="Profile Picture" class="profile-picture" style="width: 200px; border-radius: 50%;">
+      <img src="user_profile.png" alt="Profile Picture" class="profile-picture" style="width: 200px; border-radius: 50%;">
       <h2 class="profile-name" style="margin-top: 10px; font-size: 24px;">{{user.username}}</h2>
       <p class="profile-email" style="color: #888;">{{user.email}}</p>
-      <a href="/saved-addresses" class="edit-profile-link">Saved Addresses</a> <br>
+      <p class="profile-email" style="color: #888;">{{user.phone}}</p>
 
-      <a href="/edit-profile" class="edit-profile-link">Edit Profile</a>
+      <a href="/edit-profile" class="btn btn-primary btn-sm">Edit</a>
+
+
+      <a href="/saved-addresses" class="btn btn-primary btn-sm">Addresses</a> <br>
     </div>
   </div>
 </body>

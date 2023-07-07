@@ -438,7 +438,6 @@ router.get("/product-detail/:slug", async (req, res) => {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let product = await productHelpers.getProductDetails(req.params.slug);
-  console.log("slug in get ==========>", product.slug);
   res.render("user/product-detail", {
     layout: "userLayout",
     user: req.session.user,
@@ -674,11 +673,7 @@ router.post("/edit-profile", verifyLogin, async (req, res) => {
   
 });
 
-//------------404------------------//
 
-router.get("/404",(req,res)=>{
-  res.render("404",{layout: "userLayout"})
-})
 
 //logout
 
