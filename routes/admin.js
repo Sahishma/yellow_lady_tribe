@@ -347,7 +347,9 @@ router.post( "/products/add-products", uploadProduct.array("imageFile", 5), asyn
 
         const imagefilesArray = req.files;
         // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
-        const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
+        // const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
+        const imagePaths = imagefilesArray.map((file) => path.posix.join('/', file.path.replace("public\\", "")));
+
 
 
         console.log('fileArray', imagefilesArray);
