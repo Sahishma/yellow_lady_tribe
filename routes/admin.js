@@ -44,7 +44,8 @@ const productStorage = multer.diskStorage({
     cb(null, "public/images/products/");
   },
   filename: (req, file, cb) => {
-    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
+    const uniqueFilename = `${Date.now()}${randomNumber}${path.extname(file.originalname)}`;
     cb(null, uniqueFilename);
   },
 });
@@ -311,6 +312,7 @@ router.get("/categories/delete-categories/:id", verifyLogin, (req, res) => {
 //------------------------PRODUCTS SECTION-------------------------//
 const getProduct = async (req, res) => {
   productHelpers.getAllProducts().then((products) => {
+    console.log("products admin",products);
     res.render("admin/products/view-products", {
       products,
       successMsg: req.session.adminSuccessMsg,
@@ -344,7 +346,8 @@ router.post( "/products/add-products", uploadProduct.array("imageFile", 5), asyn
       try {
 
         const imagefilesArray = req.files;
-        const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+        // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+        const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
 
 
         console.log('fileArray', imagefilesArray);
@@ -396,7 +399,9 @@ router.post("/products/edit-products/:id",  uploadProduct.array("imageFile", 5),
 
   if(req.files){
     const imagefilesArray = req.files;
-    const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+    // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
+    const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
+
     console.log('fileArray', imagefilesArray);
     console.log('ImagePaths', imagePaths);
     req.body.image_urls = imagePaths;

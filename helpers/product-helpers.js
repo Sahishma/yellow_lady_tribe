@@ -83,6 +83,7 @@ module.exports = {
               status: 1,
               created_at: 1,
               category_name: "$category.category_name",
+              image_urls:1,
             },
           },
           // {

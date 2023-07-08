@@ -438,6 +438,7 @@ router.get("/product-detail/:slug", async (req, res) => {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
   }
   let product = await productHelpers.getProductDetails(req.params.slug);
+  console.log("product image urls",product);
   res.render("user/product-detail", {
     layout: "userLayout",
     user: req.session.user,
@@ -584,7 +585,7 @@ router.post("/address/add",verifyLogin,async(req,res)=>{
   } else {
     req.session.userErrorMsg = "Something went wrong";
   }
-   res.redirect("/address/add")
+   res.redirect("/saved-addresses")
 })
 
 //---Edit Address
@@ -610,7 +611,8 @@ router.post("/address/edit/:id",async(req,res)=>{
   console.log("hello edit post");
   let updateAddress = await addressHelpers.updateAddress(req.params.id,req.body)
   console.log("updateAddress",updateAddress);
-  res.redirect("/address/edit/"+req.params.id)
+  // res.redirect("/address/edit/"+req.params.id)
+  res.redirect("/saved-addresses")
 })
 
 //---delete
