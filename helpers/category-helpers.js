@@ -53,38 +53,6 @@ module.exports = {
     });
   },
 
-  // updateCategory: (categoryid, updatedCategory, callback) => {
-  //   const filter = { _id: new ObjectId(categoryid) };
-  //   const update = { $set: updatedCategory };
-  //   const options = { returnOriginal: false };
-  //   db()
-  //     .collection(collections.CATEGORY_COLLECTION)
-  //     .findOneAndUpdate(filter, update, options)
-  //     .then((result) => {
-  //       if (result.value) {
-  //         callback(result.value);
-  //       } else {
-  //         callback(null, new Error("Category not found"));
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       callback(null, error);
-  //     });
-  // },
-
-  // updateCategory: (categoryid, updatedCategory) => {
-  //   const filter = { _id: new ObjectId(categoryid) };
-  //   const update = { $set: updatedCategory };
-  //   const options = { returnOriginal: false };
-  //   return db()
-  //     .collection(collections.CATEGORY_COLLECTION)
-  //     .findOneAndUpdate(filter, update, options)
-  //     .then((result) => {
-  //       return result.value;
-  //     });
-  // },
-
   deleteCategory: (categoryId) => {
     return new Promise((resolve, reject) => {
       db()
@@ -97,7 +65,6 @@ module.exports = {
   },
 
   getcategoryByNameAndId:(body,id)=>{
-    console.log("body.category name",body.category_name,"id",id);
     return new Promise((resolve,reject)=>{
       db()
       .collection(collections.CATEGORY_COLLECTION)
@@ -109,7 +76,6 @@ module.exports = {
   },
 
   getcategoryByName:(body)=>{
-    console.log("body.category name",body.category_name);
     return new Promise((resolve,reject)=>{
       db()
       .collection(collections.CATEGORY_COLLECTION)

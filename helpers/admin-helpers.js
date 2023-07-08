@@ -43,7 +43,6 @@ module.exports = {
   },
 
   getOrderProducts: (orderId) => {
-    console.log("is order id received to get ordered product? ====>", orderId);
     return new Promise(async (resolve, reject) => {
       let orderItems = await db()
         .collection(collections.ORDER_COLLECTION)
@@ -77,7 +76,6 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log("ordered items====>>>>", orderItems);
       resolve(orderItems);
     });
   },

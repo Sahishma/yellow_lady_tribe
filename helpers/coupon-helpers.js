@@ -24,19 +24,16 @@ module.exports = {
         .sort({ created_at: -1 }) // Sort by created_at field in descending order
         .toArray();
       resolve(coupons);
-      console.log("coupons", coupons);
     });
   },
   
 
   getCouponDetails: (couponId) => {
-    console.log("entered to getCoupon details", couponId);
     return new Promise(async (resolve, reject) => {
       let coupon = await db()
         .collection(collections.COUPON_COLLECTION)
         .findOne({ _id: new ObjectId(couponId) });
       resolve(coupon);
-      console.log("response", coupon);
     });
   },
 
@@ -68,8 +65,6 @@ module.exports = {
   },
 
   getCouponByCouponCode:async(couponCode,couponId)=>{
-    console.log("entered to   getCouponByCouponCode ",couponCode);
-    console.log("entered to   getCouponByCouponCode ",couponId);
     try {
     const coupon = await db()
     .collection(collections.COUPON_COLLECTION)
@@ -81,7 +76,6 @@ module.exports = {
   },
 
   getCouponBySlug: async (slug,couponId) => {
-    console.log("couponId",couponId);
     try {
       const coupon = await db()
         .collection(collections.COUPON_COLLECTION)

@@ -85,17 +85,13 @@ const img = multer({ storage: storage });
 router.get("/", async function (req, res, next) {
   res.set("Cache-Control", "no-cache, no-store, must-revalidate");
   let orders = await orderHelpers.getDeliveredOrderListWithUserDetails();
-  console.log("orders", orders);
   let todaysOrders = await orderHelpers.getTodaysOrdersCount();
-  console.log("todaysOrders", todaysOrders);
   let todaysTotalSale = await orderHelpers.getTodaysTotalSales();
-  console.log("todaysTotalSale ", todaysOrders);
   let totalOrders = await orderHelpers.getTotalOrders();
   let totalSales = await orderHelpers.getTotalSales();
 
   let orderLineChartData = await orderHelpers.getOrderLineChartData();
   let orderBarChartData = await orderHelpers.getorderBarChartData();
-  console.log("orderBarChartData", orderBarChartData);
   res.render("admin/dashboard", { orders, todaysOrders, todaysTotalSale, totalOrders, totalSales, orderLineChartData, orderBarChartData });
 });
 
@@ -133,7 +129,7 @@ router.get("/logout", verifyLogin, (req, res) => {
 });
 
 
-//==========Sales report=======
+//==========Sales report=======//
 
 
 router.route("/sales-report")
@@ -169,16 +165,9 @@ router.route("/sales-report")
 
 //--------------filter sales table-------------//
 router.post('/get-orderData-ajax', async (req, res) => {
-  console.log("filter router");
   const startDate = req.body.startDate;
   const endDate = req.body.endDate;
-
-  console.log('Start Date:', startDate);
-  console.log('End Date:', endDate);
-
   const orderData = await orderHelpers.getSalesReport(startDate, endDate);
-  console.log(" orderData ", orderData);
-
   res.json({ orderData });
 
 })
@@ -207,9 +196,7 @@ router.get("/categories/add", (req, res) => {
 });
 
 router.post("/categories/add", uploadCategory.single("imageFile"), async (req, res) => {
-  console.log('req.body in add', req.body);
   const existingCategory = await categoryHelpers.getcategoryByName(req.body);
-  console.log('existingCategory', existingCategory);
 
   if (existingCategory === null) {
     const relativeImagePath = req.file.path;
@@ -244,29 +231,19 @@ router.get("/categories/edit-categories/:id", verifyLogin, (req, res) => {
 // Update Category
 
 router.post("/categories/edit-categories/:id", uploadCategory.single("imageFile"), async (req, res) => {
-  console.log('category edit body', req.body);
-
   const categoryId = req.params.id; // get the ID of the category to edit from the URL
   const existingCategory = await categoryHelpers.getcategoryByNameAndId(req.body, categoryId);
-  console.log("existingCategory==>", existingCategory);
 
   if (existingCategory && categoryId != null) {
     req.session.adminErrorMsg = "Category already exists";
     return res.redirect("/admin/categories/edit-categories/" + categoryId);
   }
-
-
-
   let strippedRelativeImagePath = req.body.image_url;
-  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
 
   if (req.file) {
     // Get the relative path of the uploaded image
     const relativeImagePath = req.file.path;
-    console.log("relativeImagePath", relativeImagePath);
     strippedRelativeImagePath = relativeImagePath.replace('public', '');
-    console.log("strippedRelativeImagePath", strippedRelativeImagePath);
-
 
     const oldImagePath = 'public/' + req.body.image_url;
     if (oldImagePath) {
@@ -348,7 +325,16 @@ router.post( "/products/add-products", uploadProduct.array("imageFile", 5), asyn
         const imagefilesArray = req.files;
         // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
         // const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
-        const imagePaths = imagefilesArray.map((file) => path.posix.join('/', file.path.replace("public\\", "")));
+        // const imagePaths = imagefilesArray.map((file) => path.posix.join('/', file.path.replace("public\\", "")));
+
+        const imagePaths = imagefilesArray.map(file => '\\images\\products\\' + file.filename);
+
+        
+
+        // const relativeImagePath = req.file.path;
+        // const strippedRelativeImagePath = relativeImagePath.replace('public', '');
+    
+        // req.body.image_url = strippedRelativeImagePath;
 
 
 
@@ -426,31 +412,6 @@ router.post("/products/edit-products/:id",  uploadProduct.array("imageFile", 5),
  
 });
 
-// router.post("/categories/edit-categories/:id", verifyLogin, async (req, res) => {
-//   try {
-//     const categoryid = req.params.id; // get the ID of the category to edit from the URL
-//     const updatedCategory = { category_name: req.body.category_name };
-
-//     const result = await categoryHelpers.updateCategory(categoryid, updatedCategory);
-
-//     if (result) {
-//       req.session.adminSuccessMsg = "Successfully updated";
-
-//       if (req.files && "image" in req.files) {
-//         let image = req.files.image;
-//         image.mv("./public/img/" + categoryid + ".jpg");
-//       }
-
-//       res.redirect("/admin/categories");
-//     } else {
-//       res.status(404).send("Category not found");
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send(error);
-//   }
-// });
-
 //______________________Users Section______________________//
 
 router.get("/user", verifyLogin, async (req, res) => {
@@ -492,25 +453,13 @@ router.get("/user/unblock/:id", verifyLogin, async (req, res) => {
 
 router.get("/orders", verifyLogin, async (req, res) => {
   let orders = await orderHelpers.getOrderListWithUserDetails();
-  console.log("orders in admin=======>", orders);
   res.render("admin/orders/view-orders", { orders });
 });
-
-// router.get("/orders", verifyLogin, async (req, res) => {
-//   start date =
-//   end date =
-//   let orders = await orderHelpers.getOrderListWithUserDetails(sd, ed);
-//   console.log("orders in admin=======>", orders);
-//   res.render("admin/orders/view-orders", { orders });
-// });
-
 router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
-  console.log("hello entered to route ");
   let orderDetails = await orderHelpers.fetchOrderDetailsWithProduct(
     req.params.id
   );
   // let orderDetails = await orderHelpers.getOrderDetailsWithProduct(req.params.id);
-  console.log("result orderDetails", orderDetails);
   res.render("admin/orders/view-order-products", {
     orderDetails,
     successMsg: req.session.adminSuccessMsg,
@@ -523,17 +472,16 @@ router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
 router.post("/order/status-update/:id", async (req, res) => {
   const status = req.body.status;
   const updateResult = await orderHelpers.updateStatus(req.params.id, status);
-  console.log("updateResult", updateResult);
   if (updateResult.acknowledged == true) {
     req.session.adminSuccessMsg = "Status Updated Successfully";
   } else {
     req.session.adminErrorMsg = "Something went wrong";
   }
-
   res.redirect("/admin/view-order-products/" + req.params.id);
 });
 
 //______________coupon_________________//
+
 const getCoupon = async (req, res) => {
   let getCoupons = await couponHelpers.getAllCoupons();
   res.render("admin/coupons/coupons", {
@@ -546,56 +494,25 @@ const getCoupon = async (req, res) => {
 };
 router.get("/coupons", verifyLogin, getCoupon);
 
-//......add
-
-// router.get("/coupons/add", (req, res) => {
-//   console.log("add coupon");
-//   res.render("admin/coupons/add", {
-//     adminErr: req.session.adminCouponErr,
-//   });
-//   req.session.adminCouponErr = false;
-// });
-// router.post("/coupons/add", async (req, res) => {
-//   //check coupon exist or not
-//   const couponCode = req.body.coupon_code;
-//   console.log("coupon code from body========>",req.body.coupon_code);
-//   const getCouponByCouponCode = await couponHelpers.getCouponByCouponCode(couponCode);
-//   console.log("getCouponByCouponCode========>",getCouponByCouponCode);
-//   if (getCouponByCouponCode != null) {
-//     req.session.adminCouponErr = "Entered coupon already exist";
-//   }
-//   try {
-//     couponHelpers.addCoupon(req.body);
-//     req.session.adminSuccessMsg = "Coupon added succesfully";
-//     res.redirect("/admin/coupons");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+//.........add
 
 router.get("/coupons/add", verifyLogin, (req, res) => {
-  console.log("add coupon");
   res.render("admin/coupons/add", { errorMsg: req.session.adminErrorMsg});
   req.session.adminErrorMsg = false;
 });
 router.post("/coupons/add", verifyLogin, async (req, res) => {
-  console.log("req.body", req.body);
   //check coupon exist or not
   const slug = req.body.slug;
-  console.log("slug", slug);
   const existingCoupon = await couponHelpers.getCouponBySlug(slug);
-  console.log("existingCoupon", existingCoupon);
   if (existingCoupon) {
     req.session.adminErrorMsg = "Coupon with the same slug already exists";
     return res.redirect("/admin/coupons/add");
   }
 
   const couponCode = req.body.coupon_code;
-  console.log("couponCode ", couponCode);
   const getCouponByCouponCode = await couponHelpers.getCouponByCouponCode(
     couponCode
   );
-  console.log("getCouponByCouponCode", getCouponByCouponCode);
   if (getCouponByCouponCode === null) {
     try {
       await couponHelpers.addCoupon(req.body);
@@ -613,10 +530,7 @@ router.post("/coupons/add", verifyLogin, async (req, res) => {
 
 //......Edit
 router.get("/coupons/edit/:id", verifyLogin, async (req, res) => {
-  console.log("hllo edit coupon", req.params.id);
-
   let coupon = await couponHelpers.getCouponDetails(req.params.id);
-  console.log("edit coupon ---------->>>>>>>>>>", coupon);
   res.render("admin/coupons/edit", {
     coupon,
     errorMsg:req.session.adminErrorMsg,
@@ -625,7 +539,6 @@ router.get("/coupons/edit/:id", verifyLogin, async (req, res) => {
 });
 
 router.post("/coupons/edit/:id", async (req, res) => {
-  console.log("post edit");
   console.log(req.body);
   // coupon exist or not
 
@@ -638,10 +551,8 @@ router.post("/coupons/edit/:id", async (req, res) => {
   }
 
   const couponCode = req.body.coupon_code;
-  console.log("coupon code", req.body.coupon_code);
   const id = req.params.id;
   let coupon = await couponHelpers.getCouponByCouponCode(couponCode, id);
-  console.log("coupen fetch from db", coupon);
   if (coupon && id != null) {
     req.session.adminErrorMsg = "Coupon already exist";
     return res.redirect("/admin/coupons/edit/" + req.params.id);
@@ -655,7 +566,6 @@ router.post("/coupons/edit/:id", async (req, res) => {
 
 router.get("/coupons/delete/:id", verifyLogin, (req, res) => {
   try{
-    console.log("delete copoun");
     couponHelpers.deleteCoupon(req.params.id);
     req.session.adminSuccessMsg = "Successfully Deleted";
     res.redirect("/admin/coupons");
@@ -669,7 +579,6 @@ router.get("/coupons/delete/:id", verifyLogin, (req, res) => {
 //----------------Banner-------------//
 
 router.get("/banners", verifyLogin, async (req, res) => {
-  console.log("hellow banner");
   const allBanners = await bannerHelpers.getAllBanners();
   res.render("admin/banners/banners", {
     allBanners,
@@ -683,22 +592,15 @@ router.get("/banners", verifyLogin, async (req, res) => {
 //.....Add
 
 router.get("/banners/add", verifyLogin, async (req, res) => {
-  console.log("hello banner add");
   res.render("admin/banners/add");
 });
 
 router.post("/banners/add", uploadBanner.single("imageFile"), async (req, res) => {
-  console.log('req.body in add', req.body);
-
-
   const relativeImagePath = req.file.path;
-  console.log("relativeImagePath", relativeImagePath)
   const strippedRelativeImagePath = relativeImagePath.replace('public', '');
-  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
   req.body.image_url = strippedRelativeImagePath;
 
   const banner = await bannerHelpers.addBanner(req.body);
-  console.log("banner", banner);
   req.session.adminSuccessMsg = "Successfully Added";
   res.redirect("/admin/banners");
 });
@@ -711,20 +613,15 @@ router.get("/banners/delete/:id", (req, res) => {
     req.session.adminSuccessMsg = "Successfully Deleted";
     res.redirect("/admin/banners");
   }catch(error){
-    console.log("error deleting banner");
     req.session.adminErrorMsg = "Error Deleting Banner"
     res.redirect("/admin/banners")
   }
-
-
 });
 
 //...Edit
 
 router.get("/banners/edit/:id", async (req, res) => {
-  console.log("hello edit banner");
   let banner = await bannerHelpers.getBannerDetails(req.params.id);
-  console.log("edit: banner", banner);
   res.render("admin/banners/edit", {
     banner,
     errorMsg:req.session.adminErrorMsg,
@@ -735,17 +632,13 @@ router.get("/banners/edit/:id", async (req, res) => {
 });
 
 router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, res) => {
-  console.log('banner edit body', req.body);
-
   let strippedRelativeImagePath = req.body.image_url;
   console.log("strippedRelativeImagePath", strippedRelativeImagePath);
 
   if (req.file) {
     // Get the relative path of the uploaded image
     const relativeImagePath = req.file.path;
-    console.log("relativeImagePath", relativeImagePath);
     strippedRelativeImagePath = relativeImagePath.replace('public', '');
-    console.log("strippedRelativeImagePath", strippedRelativeImagePath);
 
     const oldImagePath = 'public/' + req.body.image_url;
 

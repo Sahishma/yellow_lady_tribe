@@ -14,17 +14,13 @@ module.exports = {
   //DoRegister
 
   doRegister: (userData) => {
-    console.log("do redister userData", userData);
     delete userData.password2;
     return new Promise(async (resolve, reject) => {
       userData.password = await bcrypt.hash(userData.password, 10);
-      console.log(userData.password, "enc pass");
-      console.log("collections.USER_COLLECTION", collections.USER_COLLECTION);
       db()
         .collection(collections.USER_COLLECTION)
         .insertOne(userData)
         .then((data) => {
-          console.log("data inside then of do register", data);
           resolve(data);
         });
     });
@@ -71,11 +67,9 @@ module.exports = {
 
   getUserByEmail: async (email) => {
     try {
-      console.log("email inside getUserByEmail", email);
       const user = await db()
         .collection(collections.USER_COLLECTION)
         .findOne({ email: email });
-      console.log("getUserByEmail", user);
       return user;
     } catch (error) {
       console.log(error);
@@ -93,7 +87,6 @@ module.exports = {
     }
   },
   getUserDetails: async (user) => {
-    console.log("getUserDetails", user);
     try {
       const userDetails = await db()
         .collection(collections.USER_COLLECTION)
@@ -138,7 +131,6 @@ module.exports = {
   },
 
   generateUserLoginOtp: async (userId, phoneNumber) => {
-    console.log("userid from generateUserLoginOtp", userId);
     const otp = Math.floor(1000 + Math.random() * 9000);
 
     //BOF SENT SMS
@@ -167,14 +159,13 @@ module.exports = {
               otp: otp,
             })
             .then((response) => {
-              console.log("response from generateUserLoginOtp", response);
               resolve(response);
             });
         });
     });
   },
 
-  // otpValidate: (userId, otp) => {
+
   //   console.log("user id ", userId);
   //   console.log("otp", otp);
   //   return new Promise(async (resolve, reject) => {
@@ -247,25 +238,20 @@ module.exports = {
   },
 
   addToCart: (productId, userId) => {
-    console.log("hello enter aadtocart", productId, userId);
     let proObj = {
       item: new ObjectId(productId),
       quantity: 1,
     };
-    console.log("proObj", proObj);
     return new Promise(async (resolve, reject) => {
       let userCart = await db()
         .collection(collections.CART_COLLECTION)
         .findOne({ user: new ObjectId(userId) });
       if (userCart) {
-        console.log("hello enter to if usercart");
         let proExist = userCart.products.findIndex(
           (product) => product.item.toString() === productId.toString()
         );
-        console.log(proExist);
 
         if (proExist !== -1) {
-          console.log("hello donnt worry");
           db()
             .collection(collections.CART_COLLECTION)
             .updateOne(
@@ -279,10 +265,8 @@ module.exports = {
             )
             .then(() => {
               resolve();
-              console.log("add to cart .then");
             });
         } else {
-          console.log("if product not exist");
           db()
             .collection(collections.CART_COLLECTION)
             .updateOne(
@@ -295,9 +279,7 @@ module.exports = {
               resolve();
             });
         }
-        console.log("hello enter to aadtocart for update cart", proExist);
       } else {
-        console.log("hello enter else for add product to new cart");
         let cartObj = {
           user: new ObjectId(userId),
           products: [proObj],
@@ -452,7 +434,6 @@ module.exports = {
   // },
 
   changeProductQuantity: (details) => {
-    console.log("details ????????", details);
     details.count = parseInt(details.count);
     details.quantity = parseInt(details.quantity);
     details.cart = details.cart.toString(); // Ensure cart is a string
@@ -547,7 +528,6 @@ module.exports = {
           },
         ])
         .toArray();
-      // console.log("total of each product===>",total);
       if (total.length > 0) {
         resolve(total[0].totalPrice);
       } else {
@@ -575,7 +555,6 @@ module.exports = {
 
   checkOut: (order, products, total) => {
     return new Promise(async (resolve, reject) => {
-      console.log("entered in checkout helper fn");
       let status = order.payment === "COD" ? "Placed" : "Pending";
       let orderObj = {
         deliveryDetails: {
@@ -616,7 +595,6 @@ module.exports = {
         .deleteOne({ user: new ObjectId(order.userId) });
 
       resolve(orderResponse.insertedId);
-      console.log("response in checkout-------->", orderResponse);
     });
   },
 
@@ -686,7 +664,6 @@ module.exports = {
   
 
   getOrderProducts: (orderId) => {
-    console.log("is order id received to get ordered product? ====>", orderId);
     return new Promise(async (resolve, reject) => {
       let orderItems = await db()
         .collection(collections.ORDER_COLLECTION)
@@ -720,13 +697,11 @@ module.exports = {
           },
         ])
         .toArray();
-      console.log("ordered items====>>>>", orderItems);
       resolve(orderItems);
     });
   },
 
   generateRazorpay: (orderId, amount) => {
-    console.log("amount inside generateRazorpay()", amount);
     return new Promise((resolve, reject) => {
       var options = {
         amount: amount * 100,
@@ -735,9 +710,7 @@ module.exports = {
       };
       instance.orders.create(options, function (err, order) {
         if (err) {
-          console.log("error from generateRazorpay", err);
         } else {
-          console.log("new order here===>", order);
           resolve(order);
         }
       });

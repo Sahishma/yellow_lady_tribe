@@ -4,7 +4,6 @@ var ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
   addBanner: (body) => {
-    console.log("addBanner");
     body.created_at = new Date();
     body.deleted = false;
     return new Promise(async (resolve, reject) => {
@@ -18,7 +17,6 @@ module.exports = {
   },
 
   getAllBanners: () => {
-    console.log("getallBanners");
     return new Promise(async (resolve, reject) => {
       let banners = await db()
         .collection(collections.BANNER_COLLECTION)

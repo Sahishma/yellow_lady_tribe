@@ -28,7 +28,6 @@ module.exports = {
         }
     },
     getAllAddress:async(userId)=>{
-        console.log("userId in getAllAddress",userId);
         try{
             const allAddressCursor = db()
             .collection(collections.ADDRESS_COLLECTION)
@@ -43,7 +42,6 @@ module.exports = {
         }
     },
     getAddressDetail:async(addressId)=>{
-        console.log(" getAddressDetail",addressId);
         try{
         let addressDetails = await db()
         .collection(collections.ADDRESS_COLLECTION)
@@ -56,7 +54,6 @@ module.exports = {
     },
 
     updateAddress:async(id,body)=>{
-        console.log("id",id,"body",body);
         try{
          let updatedAddress = await db()
            .collection(collections.ADDRESS_COLLECTION)
@@ -80,7 +77,6 @@ module.exports = {
     },
 
     deleteAddress:async(id)=>{
-        console.log("delet address ",id);
         try{
             const deleteAddress = await db()
             .collection(collections.ADDRESS_COLLECTION)
