@@ -28,7 +28,6 @@ module.exports = {
   },
 
   getDeliveredOrderListWithUserDetails: async () => {
-    console.log("entered to");
     try {
       const pipeline = [
         // Match orders with status "delivered"
@@ -208,13 +207,11 @@ module.exports = {
 
   // Function to fetch order details with product title and price
   getOrderDetailsWithProduct: async (orderId) => {
-    console.log("entered getOrderDetailsWithProduct", orderId);
     try {
       // Assuming you have access to the MongoDB client and the relevant collections
 
       // Convert the order ID from string to ObjectId
       const orderIdObj = new ObjectId(orderId);
-      console.log("new ObjectId(orderId);", orderIdObj);
       // Aggregation pipeline to fetch the order details with product title and price
       const pipeline = [
         // Match the order by ID
@@ -276,7 +273,6 @@ module.exports = {
         .collection(collections.ORDER_COLLECTION)
         .aggregate(pipeline)
         .toArray();
-      console.log("Execute the aggregation pipeline", result);
 
       // If order is not found, return null or handle the error accordingly
       if (result.length === 0) {
@@ -311,7 +307,6 @@ module.exports = {
   },
 
   fetchOrderDetailsWithProduct: async (orderId) => {
-    console.log("entered to fetchOrderDetailsWithProduct", orderId);
     try {
       const pipeline = [
         // Match the order by ID
@@ -389,7 +384,6 @@ module.exports = {
   },
 
   getOrderListWithUserDetails: async () => {
-    console.log("entered to ");
     try {
       const pipeline = [
         // Sort the orders in descending order based on the date
@@ -447,8 +441,6 @@ module.exports = {
   },
 
   updateStatus: (orderId, status) => {
-    console.log("entered to update status");
-    console.log("req.body.status", status);
     return new Promise(async (resolve, reject) => {
       let updateStatus = await db()
         .collection(collections.ORDER_COLLECTION)
@@ -845,7 +837,6 @@ module.exports = {
         ])
         .toArray();
 
-      // console.log('orderStatusData', orderStatusData);
 
       const labels = [];
       const data = [];

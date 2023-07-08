@@ -8,7 +8,6 @@ module.exports = {
     product.created_at = new Date();
     product.stock = parseInt(product.stock);
     product.deleted = false;
-    console.log("addProduct", product);
     return new Promise((resolve, reject) => {
       db()
         .collection(collections.PRODUCT_COLLECTION)
@@ -100,7 +99,6 @@ module.exports = {
   },
 
   getProductsBySlug: async (slug, productId) => {
-    console.log("~~~~~~~~~~~getProductsBySlug", slug);
     try {
       const product = await db()
         .collection(collections.PRODUCT_COLLECTION)
@@ -249,20 +247,17 @@ module.exports = {
         .collection(collections.PRODUCT_COLLECTION)
         .findOne({ _id: new ObjectId(productId) })
         .then((products) => {
-          console.log(products);
           resolve(products);
         });
     });
   },
 
   getProductDetails: (slug) => {
-    console.log("slug in ===========>", slug);
     return new Promise((resolve, reject) => {
       db()
         .collection(collections.PRODUCT_COLLECTION)
         .findOne({ slug: slug })
         .then((product) => {
-          console.log(product);
           resolve(product);
         });
     });
@@ -293,7 +288,6 @@ module.exports = {
   },
 
   getBySearchQuery: (query, skip, limit) => {
-    console.log("entered to getBySearchQuery");
     return new Promise(async (resolve, reject) => {
       let products = await db()
         .collection(collections.PRODUCT_COLLECTION)
