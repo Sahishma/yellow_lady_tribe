@@ -7,8 +7,13 @@
                     <div class="mb-4 ">
                         <div class="card-header bg-secondary border-2">
                             <h5 class="font-weight-light m-2">Choose your shipping address</h5>
-                            <button id="myButton">Click Me!</button>
+                            <div class="add-new-button">
+                                <a href="/address/add">
+                                    <button type="button" class="btn btn-primary m-2">Add New</button>
+                                </a>
+                            </div>
                             <select name="address_select" id="address_select" style="width: 100%; padding: 5px;">
+                                <option>Select your address  </option>
                                 {{#each addresses}}
                                 <option value="{{this._id}}">{{this.address.[1]}}</option>
                                 {{/each}}
@@ -212,17 +217,12 @@
                     console.log("response  ==>", response)
                     let messageDiv = document.getElementById("coupen_msg_div");
                     messageDiv.innerHTML = response.message;
-
-                    if (response.status) {
+                    console.log("status",response.status);
+                    if (response.status == "success") {
                         messageDiv.style.color = "green"; // Set green color for success message
                     } else {
                         messageDiv.style.color = "red"; // Set red color for error message
                     }
-                    //let discountByCoupon = document.getElementById("coupon_discount_input");
-                    // discountByCoupon.value  = response.couponDiscount;
-
-                    //let payableAmount = document.getElementById("amount_payable_input");
-                    //payableAmount.value = response.amountPayable;
 
                     $("#coupon_discount_input").val(response.couponDiscount);
                     $("#amount_payable_input").val(response.amountPayable);

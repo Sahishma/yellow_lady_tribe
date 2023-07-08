@@ -4,6 +4,7 @@
         <div class="col-lg-5 pb-5">
             <div id="product-carousel" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner border">
+
                     {{#each product.image_urls}}
                     <div class="carousel-item {{#if @first}} active{{/if}}">
                         
@@ -45,7 +46,7 @@
             <p class="mb-4">{{product.description}}</p>
 
             <div class="d-flex align-items-center mb-4 pt-2">
-                <button onclick="" class="btn btn-primary px-3 mr-2"><i class="fas fa-heart mr-1"></i> Wishlist</button>
+                {{!-- <button onclick="" class="btn btn-primary px-3 mr-2"><i class="fas fa-heart mr-1"></i> Wishlist</button> --}}
                 
                 {{#isGreaterThan product.stock 0}}
                 <button onclick="addToCart('{{product._id}}')" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Add To Cart</button>
