@@ -371,6 +371,7 @@ router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
   let orderDetails = await orderHelpers.getOrderDetailsWithProduct(
     req.params.id
   );
+  console.log("orderDetails",orderDetails);
   let cartCount = null;
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id);
