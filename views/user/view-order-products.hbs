@@ -17,7 +17,7 @@
                     {{#isEqual orderDetails.status 'Cancelled'}}
                     <p style="color: red;">Order Cancelled</p>
                     {{else}}
-                    <a href="#" class="btn btn-secondary m-2" onclick="return confirmCancel('{{orderDetails.orderId}}')">
+                    <a href="/cancel-order/{{orderDetails.orderId}}" class="btn btn-secondary m-2" onclick="return confirmCancel('{{orderDetails.orderId}}')">
                         <button class="btn btn-danger">Cancel Order</button>
                     </a>
                     {{/isEqual}}
@@ -144,7 +144,7 @@
     }
   });
 </script>
-{{!-- <script>
+<script>
   function confirmCancel(orderId) {
     console.log('order to cancel', orderId);
     const product = {{#each orderDetails.products}}{{this}}{{/each}};
@@ -168,5 +168,7 @@
     // Prevent the default link behavior
     return false;
   }
-</script> --}}
+</script>
+
+
 
