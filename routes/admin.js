@@ -82,7 +82,7 @@ const img = multer({ storage: storage });
 
 /* GET admin listing. */
 
-router.get("/", async function (req, res, next) {
+router.get("/",verifyLogin, async function (req, res, next) {
   res.set("Cache-Control", "no-cache, no-store, must-revalidate");
   let orders = await orderHelpers.getDeliveredOrderListWithUserDetails();
   let todaysOrders = await orderHelpers.getTodaysOrdersCount();
@@ -164,7 +164,7 @@ router.route("/sales-report")
   });
 
 //--------------filter sales table-------------//
-router.post('/get-orderData-ajax', async (req, res) => {
+router.post('/get-orderData-ajax', verifyLogin,async (req, res) => {
   const startDate = req.body.startDate;
   const endDate = req.body.endDate;
   const orderData = await orderHelpers.getSalesReport(startDate, endDate);
@@ -188,14 +188,14 @@ router.get("/categories", verifyLogin, async (req, res) => {
 
 //add category
 
-router.get("/categories/add", (req, res) => {
+router.get("/categories/add",verifyLogin, (req, res) => {
   res.render("admin/categories/add", {
     errorMsg: req.session.adminErrorMsg,
   });
   req.session.adminErrorMsg = false;
 });
 
-router.post("/categories/add", uploadCategory.single("imageFile"), async (req, res) => {
+router.post("/categories/add",verifyLogin, uploadCategory.single("imageFile"), async (req, res) => {
   const existingCategory = await categoryHelpers.getcategoryByName(req.body);
 
   if (existingCategory === null) {
@@ -230,7 +230,7 @@ router.get("/categories/edit-categories/:id", verifyLogin, (req, res) => {
 
 // Update Category
 
-router.post("/categories/edit-categories/:id", uploadCategory.single("imageFile"), async (req, res) => {
+router.post("/categories/edit-categories/:id",verifyLogin, uploadCategory.single("imageFile"), async (req, res) => {
   const categoryId = req.params.id; // get the ID of the category to edit from the URL
   const existingCategory = await categoryHelpers.getcategoryByNameAndId(req.body, categoryId);
 
@@ -287,9 +287,9 @@ router.get("/categories/delete-categories/:id", verifyLogin, (req, res) => {
 });
 
 //------------------------PRODUCTS SECTION-------------------------//
+
 const getProduct = async (req, res) => {
   productHelpers.getAllProducts().then((products) => {
-    console.log("products admin",products);
     res.render("admin/products/view-products", {
       products,
       successMsg: req.session.adminSuccessMsg,
@@ -312,7 +312,7 @@ router.get("/products/add-products", verifyLogin, async (req, res) => {
   req.session.adminErrorMsg = false;
 });
 
-router.post( "/products/add-products", uploadProduct.array("imageFile", 5), async (req, res) => {
+router.post( "/products/add-products",verifyLogin, uploadProduct.array("imageFile", 5), async (req, res) => {
   const slug = req.body.slug;
     const existingSlug = await productHelpers.getProductsBySlug(slug);
 
@@ -323,28 +323,9 @@ router.post( "/products/add-products", uploadProduct.array("imageFile", 5), asyn
       try {
 
         const imagefilesArray = req.files;
-        // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
-        // const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
-        // const imagePaths = imagefilesArray.map((file) => path.posix.join('/', file.path.replace("public\\", "")));
-
         const imagePaths = imagefilesArray.map(file => '\\images\\products\\' + file.filename);
-
-        
-
-        // const relativeImagePath = req.file.path;
-        // const strippedRelativeImagePath = relativeImagePath.replace('public', '');
-    
-        // req.body.image_url = strippedRelativeImagePath;
-
-
-
-        console.log('fileArray', imagefilesArray);
-        console.log('ImagePaths', imagePaths);
-
         req.body.image_urls = imagePaths;
-        console.log("req.body", req.body);
         productHelpers.addproduct(req.body);
-
         req.session.adminSuccessMsg = "Successfully Added";
         res.redirect("/admin/products");
       } catch (error) {
@@ -372,31 +353,19 @@ router.get("/products/edit-products/:id", verifyLogin, async (req, res) => {
   res.render("admin/products/edit-products", { products, categories });
 });
 
-router.post("/products/edit-products/:id",  uploadProduct.array("imageFile", 5), async (req, res) => {
+router.post("/products/edit-products/:id",verifyLogin, uploadProduct.array("imageFile", 5), async (req, res) => {
   const id = req.params.id;
   const slug = req.body.slug;
-  console.log("id", id, "slug", slug);
   const existingSlug = await productHelpers.getProductsBySlug(slug, id);
   if (existingSlug) {
     req.session.adminErrorMsg = "Procuct with the same slug already exists";
     return res.redirect("/admin/products/edit-products/" + req.params.id);
   }
-
-  console.log('inside edit post');
-  console.log('req.files',req.files);
-
   if(req.files){
     const imagefilesArray = req.files;
     // const imagePaths = imagefilesArray.map((file) => "\\" + file.path.replace("public\\", ""));
     const imagePaths = imagefilesArray.map((file) => path.sep + file.path.replace("public" + path.sep, ""));
-
-    console.log('fileArray', imagefilesArray);
-    console.log('ImagePaths', imagePaths);
     req.body.image_urls = imagePaths;
-
-    console.log('req.body.image_urls', req.body.image_urls);
-    console.log('req.body', req.body);
-
     if (req.body.image_urls) {
       await productHelpers.updateProduct(req.params.id, req.body).then(() => {
         req.session.adminSuccessMsg = "Successfully updated";
@@ -469,7 +438,7 @@ router.get("/view-order-products/:id", verifyLogin, async (req, res) => {
   req.session.adminErrorMsg = false;
 });
 
-router.post("/order/status-update/:id", async (req, res) => {
+router.post("/order/status-update/:id",verifyLogin, async (req, res) => {
   const status = req.body.status;
   const updateResult = await orderHelpers.updateStatus(req.params.id, status);
   if (updateResult.acknowledged == true) {
@@ -538,7 +507,7 @@ router.get("/coupons/edit/:id", verifyLogin, async (req, res) => {
   req.session.adminErrorMsg = false;
 });
 
-router.post("/coupons/edit/:id", async (req, res) => {
+router.post("/coupons/edit/:id", verifyLogin,async (req, res) => {
   console.log(req.body);
   // coupon exist or not
 
@@ -595,7 +564,7 @@ router.get("/banners/add", verifyLogin, async (req, res) => {
   res.render("admin/banners/add");
 });
 
-router.post("/banners/add", uploadBanner.single("imageFile"), async (req, res) => {
+router.post("/banners/add",verifyLogin, uploadBanner.single("imageFile"), async (req, res) => {
   const relativeImagePath = req.file.path;
   const strippedRelativeImagePath = relativeImagePath.replace('public', '');
   req.body.image_url = strippedRelativeImagePath;
@@ -607,7 +576,7 @@ router.post("/banners/add", uploadBanner.single("imageFile"), async (req, res) =
 
 //...Delete
 
-router.get("/banners/delete/:id", (req, res) => {
+router.get("/banners/delete/:id",verifyLogin, (req, res) => {
   try{
     bannerHelpers.deleteBanner(req.params.id);
     req.session.adminSuccessMsg = "Successfully Deleted";
@@ -620,7 +589,7 @@ router.get("/banners/delete/:id", (req, res) => {
 
 //...Edit
 
-router.get("/banners/edit/:id", async (req, res) => {
+router.get("/banners/edit/:id",verifyLogin, async (req, res) => {
   let banner = await bannerHelpers.getBannerDetails(req.params.id);
   res.render("admin/banners/edit", {
     banner,
@@ -631,9 +600,8 @@ router.get("/banners/edit/:id", async (req, res) => {
   req.session.adminSuccessMsg = false;
 });
 
-router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, res) => {
+router.post("/banners/edit/:id",verifyLogin, uploadBanner.single("imageFile"), async (req, res) => {
   let strippedRelativeImagePath = req.body.image_url;
-  console.log("strippedRelativeImagePath", strippedRelativeImagePath);
 
   if (req.file) {
     // Get the relative path of the uploaded image
@@ -663,12 +631,11 @@ router.post("/banners/edit/:id", uploadBanner.single("imageFile"), async (req, r
   let bannerId = req.params.id
 
   try {
-    
     await bannerHelpers.updateBanner(bannerId, dataToUpdate).then(response);
     req.session.adminSuccessMsg = "Banner Updated Successfully";
     res.redirect("/admin/banners/edit/" + bannerId);
   } catch (error) {
-    req.session.adminErrorMsg = "Error updating banner.";
+    req.session.adminErrorMsg = "Banner Updated Successfully";
     res.redirect("/admin/banners/edit/" + bannerId);
   }
 });

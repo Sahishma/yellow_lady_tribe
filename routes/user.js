@@ -171,6 +171,8 @@ router.post("/login", async (req, res) => {
 });
 
 //----------------------OTP---------------------------//
+
+
 router.get("/otp-login", (req, res) => {
   res.render("user/otp-login", {
     userErrMsg: req.session.userErrMsg,
@@ -230,6 +232,7 @@ router.post("/otp-validate", async (req, res) => {
 });
 
 //---------------------CART--------------------------//
+
 
 router.get("/cart", verifyLogin, async (req, res) => {
   const categories = await categoryHelpers.getAllCategories();
@@ -568,7 +571,7 @@ router.post("/address/add", verifyLogin, async (req, res) => {
 });
 
 //---Edit Address
-router.get("/address/edit/:id", async (req, res) => {
+router.get("/address/edit/:id",verifyLogin, async (req, res) => {
   let addressDetail = await addressHelpers.getAddressDetail(req.params.id);
   res.render("user/address/edit", {
     layout: "userLayout",
@@ -577,12 +580,12 @@ router.get("/address/edit/:id", async (req, res) => {
   });
 });
 
-router.get("/address/get_json/:id", async (req, res) => {
+router.get("/address/get_json/:id",verifyLogin, async (req, res) => {
   let addressDetail = await addressHelpers.getAddressDetail(req.params.id);
   res.json({ addressDetail });
 });
 
-router.post("/address/edit/:id", async (req, res) => {
+router.post("/address/edit/:id",verifyLogin, async (req, res) => {
   let updateAddress = await addressHelpers.updateAddress(
     req.params.id,
     req.body
@@ -592,7 +595,7 @@ router.post("/address/edit/:id", async (req, res) => {
 
 //---delete
 
-router.get("/address/delete/:id", async (req, res) => {
+router.get("/address/delete/:id",verifyLogin, async (req, res) => {
   try {
     let deleteAddress = await addressHelpers.deleteAddress(req.params.id);
     req.session.userSuccessMsg = "Address Added Successfully";
