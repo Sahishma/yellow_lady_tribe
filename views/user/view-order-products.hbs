@@ -39,7 +39,7 @@
                         {{#each orderDetails.products}}
 
                         <tr>
-                            <td><img src="/img/{{this.productId}}.jpg" alt="" style="max-width: 50px; max-heigth: 50"> {{this.productName}}</td>
+                            <td><img src="{{this.products.image_urls.[0]}}" alt="" style="max-width: 50px; max-heigth: 50"> {{this.productName}}</td>
                             <td class="align-middle">Rs. {{this.price}}</td>
                             <td class="align-middle"> {{this.quantity}}</td>
                             {{!-- <td class="align-middle">Rs.{{this.rowTotal }} </td> --}}
